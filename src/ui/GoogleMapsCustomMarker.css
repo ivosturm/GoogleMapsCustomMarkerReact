@@ -1,0 +1,118 @@
+/*
+Place your custom CSS here
+*/
+.widget-google-maps-wrapper {
+    position: relative;
+}
+
+.widget-google-maps-wrapper > div {
+    position: absolute;
+    top: 0; bottom: 0; left: 0; right: 0;
+}
+
+.widget-google-maps-marker{
+    background-image: url(data:image/png;base64,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);
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    padding: 0;
+    left: -25px;
+    top: -50px;
+    position: absolute;
+}
+
+.widget-google-maps-marker-url {
+    background-repeat: no-repeat;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    padding: 0;
+    left: -25px;
+    top: -50px;
+    position: absolute;
+}
+
+ /* Toggle legend*/
+ div.googlemaps-custommarker button.gm-control-active.gm-layer-control.gm-fullscreen-control {
+	background: none rgb(255, 255, 255);
+	border: 0px;
+	margin: 60px 12px;
+	padding: 0px;
+	position: absolute;
+	top:0px;
+	right: 0px;
+	cursor: pointer;
+	user-select: none;
+	border-radius: 2px;
+	height: 40px;
+	width: 40px;
+	box-shadow: 1;
+}
+
+/*Legend*/
+div.googlemaps-custommarker div.gm-layer-modal {
+	background: white;
+	border: solid 1px lightgrey;
+	margin: 8px;
+	padding: 0px;
+	position: absolute;
+	cursor: pointer;
+	user-select: none;
+	width: 200px;
+	box-shadow: rgba(0, 0, 0, 0.3) 0px 2px 6px 0px;
+	overflow: hidden;
+	top: 0px;
+	right: 0px;
+}
+
+/* legend title*/
+div.googlemaps-custommarker div.gm-layer-modal div.gm-layer-modal-text {
+	margin: 30px 24px;
+	font-size: 24px;
+	font-weight: 300;
+	line-height: 1.333333;
+	color: darkblue;
+	/*padding-bottom: 20px;
+	padding-top: 32px;*/
+}
+
+/* close legend button */
+div.googlemaps-custommarker div.gm-layer-modal button.gm-ui-hover-effect.gm-layer-modal-close {
+	background: none;
+	display: block;
+	border: 0px;
+	margin: 0px;
+	padding: 0px;
+	position: absolute;
+	cursor: pointer;
+	user-select: none;
+	top: 24px;
+	right: 24px;
+}
+
+/* legend items */
+div.googlemaps-custommarker div.gm-layer-modal ul {
+	list-style-type: none;
+	margin: 8px 0px;
+	padding: 0px;
+	cursor: pointer;
+}
+/* checkboxes */
+ div.googlemaps-custommarker div.gm-layer-modal ul input {
+	margin: 0px 5px 0px 0px;           
+}
+/* legend item images */
+ div.googlemaps-custommarker div.gm-layer-modal ul img {
+	display: inline-block;
+	margin: 0px 10px;
+	width: 16px;
+}
+/* legend item labels */
+ div.googlemaps-custommarker div.gm-layer-modal ul li {
+	text-transform: uppercase;
+	font-size: 15px;
+	font-weight: 300;
+	line-height: 1.333333;
+	color: darkgrey;
+	margin: 0px 5px;
+}

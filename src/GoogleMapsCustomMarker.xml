@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget id="first consulting.googlemapscustommarker.GoogleMapsCustomMarker" pluginWidget="true" needsEntityContext="true" offlineCapable="true"
+        supportedPlatform="Web"
+        xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../node_modules/mendix/custom_widget.xsd">
+    <name>Google Maps Custom Marker</name>
+    <description>An extension to the default Mendix Maps widget for showing point locations on a Google Map. It offers heaps of extra features like dropping/dragging and clustering</description>
+    <icon>
+    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
+	</icon>
+  <properties>
+		<propertyGroup caption="Behavior">
+			<propertyGroup caption="Map">
+				<property key="apiAccessKey" type="string" required="false">
+					<caption>Maps API Access Key</caption>
+					<description>For using in Production, a Google Maps API key will be needed. For development purposes it can be left empty, but will generate text overlays 'For development purposes only' by Google</description>
+				</property> 			
+				<property key="defaultLat" type="string" defaultValue="0.0">
+					<caption>Default Latitude</caption>
+					<description>Default latitude for the map to start at.</description> 
+				</property>
+				<property key="defaultLng" type="string" defaultValue="0.0">
+					<caption>Default Longitude</caption>
+					<description>Default longitude for the map to start at.</description> 
+				</property>
+				<property key="defaultMapType" type="enumeration" defaultValue="ROADMAP">
+					<caption>Map Type</caption>
+					<description>Set the default map type</description>
+					<enumerationValues>
+						<enumerationValue key="ROADMAP">Roadmap</enumerationValue>
+						<enumerationValue key="SATELLITE">Satellite</enumerationValue>
+						<enumerationValue key="HYBRID">Hybrid</enumerationValue>
+						<enumerationValue key="TERRAIN">Terrain</enumerationValue>
+					</enumerationValues>
+				</property>
+			</propertyGroup>
+			<propertyGroup caption="Configuration">
+					<systemProperty key="Visibility"/>
+					<systemProperty key="Editability"/>
+					<property key="draggableInEditMode" type="boolean" defaultValue="false">
+						<caption>Draggable in Edit mode</caption>
+					<description>If objects are editable, objects will also be draggable if this option is set to 'Yes'. Be carefull with this setting, since if a Polygon consists of thousands of points, dragging triggers an event for each changed point. The page will be performing badly with such an action...</description> 
+				</property>
+			</propertyGroup>
+			<propertyGroup caption="Zoom">
+				<property key="zoomToCurrentLocation" type="boolean" defaultValue="false">
+					<caption>Zoom to Current Location</caption>
+					<description>When set to 'Yes' the browser will try to get the current location. If succesfull that loction will be used to zoom. In case an object can be drawn, the marker will already be placed at the current location.</description> 
+				</property>
+				<property key="overruleFitBoundsZoom" type="boolean" defaultValue="false">
+					<caption>Overrule single item zoom level</caption>
+					<description>When set to 'No' Google determines the right zoom level to fit the shape in, if set to 'Yes' the zoom level you set at 'Single item zoom level' is used.</description> 
+				</property>
+				<property key="lowestZoom" type="integer" defaultValue="15">
+					<caption>Single item zoom level</caption>
+					<description>The zoom level used when displaying a single item. 1 is the whole world, 15 is city level, 20 is house level.</description> 
+				</property>
+			</propertyGroup>
+		</propertyGroup>
+		<propertyGroup caption="Data Source">
+			<propertyGroup caption="Location">
+				<property key="markerObjects" type="datasource" isList="true" required="false">
+					<caption>Data source</caption>
+					<description/>
+				</property>
+				<property key="latAttr" type="attribute" required="true" dataSource="markerObjects">
+					<caption>Latitude attribute</caption>
+					<description>The latitude attribute.</description>
+					<attributeTypes>
+						<attributeType name="Decimal"/>
+						<attributeType name="String"/>
+					</attributeTypes>
+				</property>
+				<property key="latAttrUpdate" type="attribute" required="false">
+					<caption>Lat Attribute (for updates)</caption>
+					<description>Select the attribute that holds the latitude here again, in case updating of the position of the marker from the UI needs to be supported. This is needed because of a current bug in the pluggable widgets API, not being able to update attributes of objects retrieved via datasource.
+					</description>
+					<attributeTypes>
+						<attributeType name="Decimal"/>
+						<attributeType name="String"/>
+					</attributeTypes>
+				</property>
+				<property key="lngAttr" type="attribute" required="true" dataSource="markerObjects">
+					<caption>Longtitude attribute</caption>
+					<description>The longtitude attribute.</description>
+					<attributeTypes>
+						<attributeType name="Decimal"/>
+					</attributeTypes>
+				</property>
+				<property key="lngAttrUpdate" type="attribute" required="false">
+					<caption>Lng Attribute (for updates)</caption>
+					<description>Select the attribute that holds the longitude here again, in case updating of the position of the marker from the UI needs to be supported. This is needed because of a current bug in the pluggable widgets API, not being able to update attributes of objects retrieved via datasource.
+					</description>
+					<attributeTypes>
+						<attributeType name="Decimal"/>
+					</attributeTypes>
+				</property>
+			</propertyGroup>
+			<propertyGroup caption="Geocoding">	
+				<property key="formattedAddressAttrUpdate" type="attribute" required="false">
+					<caption>Formatted Address</caption>
+					<description>When draggging a marker, the Google Geocoder API will be used to reverse geocode the Lat/Lng to addresses. The results are parsed to JSON format and stored in this attribute. In principe geometry_locationtype = 'ROOFTOP' will give the best match(es). Will not work without a valid API key.</description> 
+					<attributeTypes>
+						<attributeType name="String"/>
+					</attributeTypes>
+				</property>	
+			</propertyGroup>
+			<propertyGroup caption="Appearance - Enum based">
+				<property key="enumAttr" type="attribute" required="false" dataSource="markerObjects">
+					<caption>Enum attribute</caption>
+					<description>The enumeration for the marker images. If this atribute is selected, it will overrule the symbol/color/size attributes! Next to selecting the enumeration also the mapping of the enumeration values to the images needs to be done below.</description>
+					<attributeTypes>
+						<attributeType name="Enum"/>
+					</attributeTypes>
+				</property>	
+				<property key="defaultIcon" type="image" required="false">
+					<caption>Default icon</caption>
+					<description>The default image to use if no enumeration is available. If no icon is selected here a default red Google Maps marker will be used.</description>
+				</property>
+				<property key="markerImages" type="object" isList="true" required="false">
+					<caption>Enum based marker images</caption>
+					<description>Set images for the markers based on an enumeration.</description>
+					<properties>
+						<propertyGroup caption="Enum Entries">
+							<property key="enumKey" type="string">
+								<caption>Enum key</caption>
+								<description>The enum key as string. (Does not recognize empty '' enum value. Use the default icon for these.)</description>
+							</property>
+							<property key="enumImage" type="image">
+								<caption>Image</caption>
+								<description>The image for the enumeration key.</description>
+							</property>
+						</propertyGroup>
+					</properties>
+				</property>
+			</propertyGroup>
+			<propertyGroup caption="Appearance - Color based">
+				<property key="colorAttr" type="attribute" required="false" dataSource="markerObjects">
+					<caption>Object color</caption>
+					<description>The hexadecimal color of the object. It should start with a '#'.</description> 
+					<attributeTypes>
+						<attributeType name="String"/>
+					</attributeTypes>
+				</property>
+				<property key="opacityAttr" type="attribute" required="false" dataSource="markerObjects">
+					<caption>Object opacity</caption>
+					<description>The Marker opacity between 0.0 and 1.0. The value 0.0 means completely opaque / not visible. Defaults to 1.0.</description> 
+					<attributeTypes>
+						<attributeType name="Decimal"/>
+					</attributeTypes>
+				</property>
+				<property key="markerSymbolAttr" type="attribute" required="false" dataSource="markerObjects">
+					<caption>Symbol</caption>
+					<description>Determines which symbol for the marker is used.</description>
+					<attributeTypes>
+						<attributeType name="Enum"/>
+					</attributeTypes>
+				</property>
+				<property key="markerSizeAttr" type="attribute" required="false" dataSource="markerObjects">
+					<caption>Marker Size</caption>
+					<description>Determines the size of the symbol used to mark the location.</description>
+					<attributeTypes>
+						<attributeType name="Enum"/>
+					</attributeTypes>
+				</property>
+				<property key="infoWindowAttr" type="attribute" required="false" dataSource="markerObjects">
+					<caption>InfoWindow attribute</caption>
+					<description>The attribute that will be displayed in the marker info bubble. (Not required)</description>
+					<attributeTypes>
+						<attributeType name="String"/> 
+					</attributeTypes>
+				</property>
+			</propertyGroup>
+		</propertyGroup>
+		<propertyGroup caption="Interaction">
+			<propertyGroup caption="General">
+				<property key="disableInfoWindow" type="boolean" defaultValue="false">
+					<caption>Disable infowindow on click</caption>
+					<description>When set to true the on click microflow will directly be triggered in stead of via the infowindow.</description> 
+				</property>
+				<property key="infoWindowNameLabel" type="string" defaultValue="Name">
+					<caption>Name Label</caption>
+					<description>The label of the name popping up in the infowindow.</description> 
+				</property>
+			</propertyGroup>
+			<propertyGroup caption="Button">	
+				<property key="onClickButtonClass" type="string" defaultValue="btn mx-button">
+					<caption>On Click Button Class</caption>
+					<description>The classes on the button to appear in the infowindow. By default mendix default classes are added. Those can be stripped and/or your own class added.</description> 
+				</property>
+				<property key="onClickButtonLabel" type="string" defaultValue="Open">
+					<caption>On Click Button Label</caption>
+					<description>The name on the button to appear in the infowindow.</description> 
+				</property>
+				<property key="onClick" type="action" required="false" dataSource="markerObjects">
+					<caption>On click</caption>
+					<description/>
+				</property>
+			</propertyGroup>
+		</propertyGroup>
+		<propertyGroup caption="Clustering">
+			<property key="enableMarkerClusterer" type="boolean" defaultValue="true">
+				<caption>Enable Clustering</caption>
+				<description>Enable or disable the marker clustering when zooming out.</description> 
+			</property>
+			<property key="MCGridSize" type="integer" defaultValue="20">
+				<caption>Grid Size</caption>
+				<description>Determines the maximum size of the grid shown.</description> 
+			</property>
+			<property key="MCMaxZoom" type="integer" defaultValue="18">
+				<caption>Maximum Zoom</caption>
+				<description>Determines the maximum zoomed-in level at which clustering is done.</description> 
+			</property>  
+		</propertyGroup>
+		<propertyGroup caption="Legend">
+			<property key="legendEnabled" type="boolean" defaultValue="false">
+				<caption>Enabled</caption>
+				<description>Enable/Disable legend.</description> 
+			</property>
+			<property key="legendHeaderText" type="string" defaultValue="Legend">
+				<caption>Header Text</caption>
+				<description>Text to appear on top of legend pane. Defaults to 'Legend'.</description> 
+			</property>
+			<property key="legendEntries" type="object" isList="true" required="false">
+				<caption>Legend entries</caption>
+				<description/>
+				<properties>
+					<propertyGroup caption="Legend Entries">
+						<property key="legendEntryName" type="string">
+							<caption>Name</caption>
+							<description>Name to appear in legend menu.</description>
+						</property>
+						<property key="legendEntryIcon" type="enumeration" defaultValue="MARKER">
+							<caption>Icon</caption>
+							<description>Icon to appear in legend menu.</description>
+							<enumerationValues>
+								<enumerationValue key="MARKER">Marker</enumerationValue>
+								<enumerationValue key="CIRCLE">Circle</enumerationValue>
+								<enumerationValue key="DIAMOND">Diamond</enumerationValue>				
+								<enumerationValue key="STAR">Star</enumerationValue>
+								<enumerationValue key="CROSS">Cross</enumerationValue>
+								<enumerationValue key="TRIANGLE">Triangle</enumerationValue>
+							</enumerationValues>
+						</property>
+						<property key="legendEntryColor" type="string" defaultValue="#F00">
+							<caption>Color</caption>
+							<description>Color of icon to appear in legend menu.</description>
+						</property>
+					</propertyGroup>
+				</properties>
+			</property>
+		</propertyGroup>
+		<propertyGroup caption="SearchBox">
+			<property key="searchBoxEnabled" type="boolean" defaultValue="false">
+				<caption>Enabled</caption>
+				<description>Enable/Disable search box. Be aware; this functionality needs a working API key, also to test.</description> 
+			</property>
+			<property key="searchBoxPlaceholder" type="string" defaultValue="SearchBox">
+				<caption>Placeholder</caption>
+				<description>Add a placeholder text to the search box input area.</description> 
+			</property>
+			<property key="searchBoxWidth" type="integer" defaultValue="300">
+				<caption>Width</caption>
+				<description>Determine the width in pixels for the SearchBox.</description> 
+			</property>
+			<property key="searchBoxHeight" type="integer" defaultValue="44">
+				<caption>Width</caption>
+				<description>Determine the height in pixels for the SearchBox.</description> 
+			</property>
+		</propertyGroup>
+		<propertyGroup caption="Lines">
+			<property key="showLines" type="boolean" defaultValue="false">
+				<caption>Show Lines</caption>
+				<description>If set to true, lines between markers will be shown.</description>
+			</property>
+			<property key="lineType" type="enumeration"  required="true" defaultValue="Normal">
+				<caption>Line Type</caption>
+				<description>The type of line. Supported are: Normal, Dashed and Dotted.</description> 
+				<enumerationValues>
+					<enumerationValue key="Normal">Normal</enumerationValue>
+					<enumerationValue key="Dotted">Dotted</enumerationValue>
+					<enumerationValue key="Dashed">Dashed</enumerationValue>
+				</enumerationValues>
+        	</property>
+			<property key="hideMarkers" type="boolean" defaultValue="false">
+				<caption>Hide Markers</caption>
+				<description>If set to true only the line -no markers-  will be shown.</description>
+			</property>
+			<property key="lineColor" type="string" required="false" defaultValue="#0595db">
+				<caption>Line Color</caption>
+				<description>The hexadecimal color of the lines</description>
+			</property>
+			<property key="lineThickness" type="integer" defaultValue="3">
+				<caption>Line Thickness</caption>
+				<description>The thickness of the lines in pixels</description> 
+			</property>
+			<property key="lineOpacity" type="string" defaultValue="1.0">
+				<caption>Line Opacity</caption>
+				<description>The lines' opacity between 0.0 and 1.0. The value 0.0 means completely opaque / not visible. Defaults to 1.0.</description> 
+			</property>
+		</propertyGroup>
+        <!-- Map CONTROLS -->
+		<propertyGroup caption="Customization">
+			<propertyGroup caption="Map Controls">
+				<property key="opt_drag" type="boolean" defaultValue="true">
+					<caption>Drag</caption>
+					<description>Enable/disable dragging a map using the mouse</description>
+				</property>
+				<property key="opt_mapcontrol" type="boolean" defaultValue="true">
+					<caption>Type</caption>
+					<description>Enable/disable Map Type control</description>
+				</property>
+				<property key="opt_scroll" type="boolean" defaultValue="true">
+					<caption>Scroll</caption>
+					<description>Enable/disable using the scrollwheel to zoom in/out</description>
+				</property>
+				<property key="opt_streetview" type="boolean" defaultValue="true">
+					<caption>Streetview</caption>
+					<description>Enable/disable Streetview control</description>
+				</property>
+				<property key="opt_zoomcontrol" type="boolean" defaultValue="true">
+					<caption>Zoom Control</caption>
+					<description>Enable/disable Zoom control</description>
+				</property>
+				<property key="opt_tilt" type="enumeration" defaultValue="d0">
+					<caption>Tilt</caption>
+					<description>Angle of the map. This can be set to 45 degrees, if this is available for some locations and only when using type Satellite or Hybrid. It will automatically switch to 0 degrees if it is not available.</description>
+					<enumerationValues>
+						<enumerationValue key="d0">0</enumerationValue>
+						<enumerationValue key="d45">45</enumerationValue>
+					</enumerationValues>
+				</property> 
+			</propertyGroup>
+			<propertyGroup caption="Map Styling">
+				<property key="styleArray" type="string" multiline="true" required="false">
+					<caption>Style Array</caption>
+					<description>Use this to add custom styles to your maps.</description>
+				</property>
+			</propertyGroup>
+		</propertyGroup>
+    </properties>
+</widget>
