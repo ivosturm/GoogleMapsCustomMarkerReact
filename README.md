@@ -1,17 +1,46 @@
 ## GoogleMapsCustomMarker
-[An extension to the default Mendix Maps widget for showing point locations on a Google Map. It offers heaps of extra features like dropping/dragging and clustering]
+An extension to the default Mendix Maps widget for showing point locations on a Google Map. It offers heaps of extra features like dropping/dragging, geocoding, marker clustering and determining current location
+
+This widget is a rewrite of the original GoogleMapsCustomMarker widget, originally based on the Dojo framework, see https://marketplace.mendix.com/link/component/43162
+
+This widget uses React / TypeScript and the new pluggable widgets API. Additional features:
+
+* Support for all datasources, even nanoflows;
+* Support for all types of on click behavior when clicking on a Marker;
+* Editability based on Mendix Studio Pro, respecting entity access rights;
+
 
 ## Features
-[feature highlights]
+* Drawing and dragging marker. In the process the location is reverse geocoded and all possible addresses retrieved.
+* Multiple symbols (cross, diamond, circle, triangle, star) supported next to default Google Maps marker 
+* Polyline between all marker locations, with or without markers
+* Extra Legend with custom symbols / images by enumeration
+* Marker clustering when zooming out
+* Search box for easy navigation to known address
+* Determining current location;
 
 ## Usage
-[step by step instructions]
+* API Key: 
+	* Production: If you want to use the widget in Production a valid Google Maps API key needs to be entered in every widget instance. 
+	* Development: Developing can be done without an API key, but will show messages on top of the Google Map, making it unusable in Production.
+
+* Add the Google Maps Custom Marker widget to your page, see screenshots for Settings in Studio Pro.
+
+* At least configure:
+
+	1. Data source: the Mendix objects containing the Location data
+	2. For Position: Latitude / Longitude attributes: required format: Decimal
+	3. For Editing of Position: Lat Attribute (for updates) / Lng Attribute (for updates)
+	4. For Reverse geocoding (retrieving addresses when dragging marker): Formatted Address 
+	5. Appearance: Enum attribute / Color + Symbol + Size attribute: If Enum attribute is selected, configure 'Enum based marker images' as well. If no Enum attribute selected then configure at least Color and Symbol attribute and optional the Size attribute.
+
+* All other features (Legend / Interaction via on click infowindow / Marker Clustering / SearchBox / Lines) should be self explanatory. 
 
 ## Demo project
-[link to sandbox]
+https://googlemapscustomma.mxapps.io/index.html?profile=Responsive
 
 ## Issues, suggestions and feature requests
-[link to GitHub issues]
+This version uses the React Google Maps API library for creating React elements, without hooks for now. 
 
 ## Development and contribution
-[specify contribute]
+Thanks to the team maintaining the React Google Maps API library, see https://www.npmjs.com/package/@react-google-maps/api
