@@ -1,10 +1,13 @@
 ## GoogleMapsCustomMarker
-An extension to the default Mendix Maps widget for showing point locations on a Google Map. It offers heaps of extra features like dropping/dragging, geocoding, marker clustering and determining current location
+An extension to the default Mendix Maps widget for showing point locations on a Google Map. It offers heaps of extra features like dropping/dragging, geocoding, marker clustering and determining current location. See all features in action here:
+
+https://googlemapscustomma.mxapps.io/index.html?profile=Responsive
 
 This widget is a rewrite of the original GoogleMapsCustomMarker widget, originally based on the Dojo framework, see https://marketplace.mendix.com/link/component/43162
 
 This widget uses React / TypeScript and the new pluggable widgets API. Additional features:
 
+* Determine current location
 * Support for all datasources, even nanoflows;
 * Support for all types of on click behavior when clicking on a Marker;
 * Editability based on Mendix Studio Pro, respecting entity access rights;
