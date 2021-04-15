@@ -27,12 +27,11 @@ This widget uses React / TypeScript and the new pluggable widgets API. Additiona
 * Add the Google Maps Custom Marker widget to your page, see screenshots for Settings in Studio Pro.
 
 * At least configure:
-
-	*. Data source: the Mendix objects containing the Location data
-	*. For Position: Latitude / Longitude attributes: required format: Decimal
-	*. For Editing of Position: Lat Attribute (for updates) / Lng Attribute (for updates)
-	*. For Reverse geocoding (retrieving addresses when dragging marker): Formatted Address 
-	*. Appearance: Enum attribute / Color + Symbol + Size attribute: If Enum attribute is selected, configure 'Enum based marker images' as well. If no Enum attribute selected then configure at least Color and Symbol attribute and optional the Size attribute.
+	* Data source: the Mendix objects containing the Location data
+	* For Position: Latitude / Longitude attributes: required format: Decimal
+	* For Editing of Position: Lat Attribute (for updates) / Lng Attribute (for updates)
+	* For Reverse geocoding (retrieving addresses when dragging marker): Formatted Address 
+	* Appearance: Enum attribute / Color + Symbol + Size attribute: If Enum attribute is selected, configure 'Enum based marker images' as well. If no Enum attribute selected then configure at least Color and Symbol attribute and optional the Size attribute.
 
 * All other features 
 	1. Legend
