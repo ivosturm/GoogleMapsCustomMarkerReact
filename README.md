@@ -28,13 +28,21 @@ This widget uses React / TypeScript and the new pluggable widgets API. Additiona
 
 * At least configure:
 
-	1. Data source: the Mendix objects containing the Location data
-	2. For Position: Latitude / Longitude attributes: required format: Decimal
-	3. For Editing of Position: Lat Attribute (for updates) / Lng Attribute (for updates)
-	4. For Reverse geocoding (retrieving addresses when dragging marker): Formatted Address 
-	5. Appearance: Enum attribute / Color + Symbol + Size attribute: If Enum attribute is selected, configure 'Enum based marker images' as well. If no Enum attribute selected then configure at least Color and Symbol attribute and optional the Size attribute.
+	*. Data source: the Mendix objects containing the Location data
+	*. For Position: Latitude / Longitude attributes: required format: Decimal
+	*. For Editing of Position: Lat Attribute (for updates) / Lng Attribute (for updates)
+	*. For Reverse geocoding (retrieving addresses when dragging marker): Formatted Address 
+	*. Appearance: Enum attribute / Color + Symbol + Size attribute: If Enum attribute is selected, configure 'Enum based marker images' as well. If no Enum attribute selected then configure at least Color and Symbol attribute and optional the Size attribute.
 
-* All other features (1. Legend / 2. Interaction via on click infowindow / 3. Marker Clustering / 4. SearchBox / 5. Lines / 6. Location based on current location) should be self explanatory. A print screen for settings per feature is added in the Mendix Marketplace.
+* All other features 
+	1. Legend
+	2. Interaction via on click infowindow
+	3. Marker Clustering
+	4. SearchBox
+	5. Lines (with/without Markers)
+	6. Location based on current location) 
+	
+	should be self explanatory. A print screen for settings per feature is added in the Mendix Marketplace.
 
 ## Demo project
 https://googlemapscustomma.mxapps.io/index.html?profile=Responsive
