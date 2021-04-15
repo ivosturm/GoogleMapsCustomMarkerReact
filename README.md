@@ -34,7 +34,7 @@ This widget uses React / TypeScript and the new pluggable widgets API. Additiona
 	4. For Reverse geocoding (retrieving addresses when dragging marker): Formatted Address 
 	5. Appearance: Enum attribute / Color + Symbol + Size attribute: If Enum attribute is selected, configure 'Enum based marker images' as well. If no Enum attribute selected then configure at least Color and Symbol attribute and optional the Size attribute.
 
-* All other features (Legend / Interaction via on click infowindow / Marker Clustering / SearchBox / Lines) should be self explanatory. A print screen for settings per feature is added in the Mendix Marketplace.
+* All other features (1. Legend / 2. Interaction via on click infowindow / 3. Marker Clustering / 4. SearchBox / 5. Lines) should be self explanatory. A print screen for settings per feature is added in the Mendix Marketplace.
 
 ## Demo project
 https://googlemapscustomma.mxapps.io/index.html?profile=Responsive
