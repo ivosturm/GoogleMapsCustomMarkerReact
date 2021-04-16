@@ -54,7 +54,7 @@ This widget uses React / TypeScript and the new pluggable widgets API. Additiona
 https://googlemapscustomma.mxapps.io/index.html?profile=Responsive
 
 ## Issues, suggestions and feature requests
-This version uses the React Google Maps API library for creating React elements, without hooks for now. 
+This version uses the React Google Maps API library for creating React elements, without hooks for now. Currently there is a shortcoming in the Mendix Pluggable widgets API, not being able to directly change an attribute loaded by data source, hence the latitude and longitude attributes have to be selected twice in the widget settings, if updates on latitude/longitude need to be automated by the widget via dragging.
 
 ## Development and contribution
 Thanks to the team maintaining the React Google Maps API library, see https://www.npmjs.com/package/@react-google-maps/api
