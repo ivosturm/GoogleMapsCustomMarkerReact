@@ -41,12 +41,12 @@ This widget uses React / TypeScript and the new pluggable widgets API. Additiona
 			* Size attribute; please use an enumeration attribute with possible keys: 'XXS','XS','S','M','L'
 
 * All other features 
-	1. Legend
-	2. Interaction via on click infowindow
+	1. Legend (based on enumeration or symbols)
+	2. Interaction via on click infowindow or directly on click
 	3. Marker Clustering
 	4. SearchBox
-	5. Lines (with/without Markers)
-	6. Location based on current location) 
+	5. Lines (Dotted/Dashed/with/without Markers)
+	6. Location based on current location
 	
 	should be self explanatory. A print screen for settings per feature is added in the Mendix Marketplace.
 
