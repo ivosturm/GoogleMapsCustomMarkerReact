@@ -105,7 +105,9 @@
 					</attributeTypes>
 				</property>	
 			</propertyGroup>
-			<propertyGroup caption="Appearance - Enum based">
+		</propertyGroup>
+		<propertyGroup caption="Appearance">
+			<propertyGroup caption="Enum based">
 				<property key="enumAttr" type="attribute" required="false" dataSource="markerObjects">
 					<caption>Enum attribute</caption>
 					<description>The enumeration for the marker images. If this atribute is selected, it will overrule the symbol/color/size attributes! Next to selecting the enumeration also the mapping of the enumeration values to the images needs to be done below.</description>
@@ -134,7 +136,7 @@
 					</properties>
 				</property>
 			</propertyGroup>
-			<propertyGroup caption="Appearance - Color based">
+			<propertyGroup caption="Color based">
 				<property key="colorAttr" type="attribute" required="false" dataSource="markerObjects">
 					<caption>Object color</caption>
 					<description>The hexadecimal color of the object. It should start with a '#'.</description> 
@@ -151,23 +153,16 @@
 				</property>
 				<property key="markerSymbolAttr" type="attribute" required="false" dataSource="markerObjects">
 					<caption>Symbol</caption>
-					<description>Determines which symbol for the marker is used.</description>
+					<description>Determines which symbol for the marker is used. An enum with keys 'MARKER','DIAMOND','CIRCLE','CROSS','TRIANGLE', 'STAR' should be used here, since those are the symbols that are supported.</description>
 					<attributeTypes>
 						<attributeType name="Enum"/>
 					</attributeTypes>
 				</property>
 				<property key="markerSizeAttr" type="attribute" required="false" dataSource="markerObjects">
 					<caption>Marker Size</caption>
-					<description>Determines the size of the symbol used to mark the location.</description>
+					<description>Determines the size of the symbol used to mark the location. An enum with keys XXS,XS,S,M,L should be used here.</description>
 					<attributeTypes>
 						<attributeType name="Enum"/>
-					</attributeTypes>
-				</property>
-				<property key="infoWindowAttr" type="attribute" required="false" dataSource="markerObjects">
-					<caption>InfoWindow attribute</caption>
-					<description>The attribute that will be displayed in the marker info bubble. (Not required)</description>
-					<attributeTypes>
-						<attributeType name="String"/> 
 					</attributeTypes>
 				</property>
 			</propertyGroup>
@@ -177,6 +172,13 @@
 				<property key="disableInfoWindow" type="boolean" defaultValue="false">
 					<caption>Disable infowindow on click</caption>
 					<description>When set to true the on click microflow will directly be triggered in stead of via the infowindow.</description> 
+				</property>
+				<property key="infoWindowAttr" type="attribute" required="false" dataSource="markerObjects">
+					<caption>InfoWindow attribute</caption>
+					<description>The attribute that will be displayed in the marker info bubble. (Not required)</description>
+					<attributeTypes>
+						<attributeType name="String"/> 
+					</attributeTypes>
 				</property>
 				<property key="infoWindowNameLabel" type="string" defaultValue="Name">
 					<caption>Name Label</caption>

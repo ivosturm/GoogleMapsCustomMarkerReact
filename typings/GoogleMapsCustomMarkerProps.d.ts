@@ -62,8 +62,8 @@ export interface GoogleMapsCustomMarkerContainerProps {
     opacityAttr?: ListAttributeValue<BigJs.Big>;
     markerSymbolAttr?: ListAttributeValue<string>;
     markerSizeAttr?: ListAttributeValue<string>;
-    infoWindowAttr?: ListAttributeValue<string>;
     disableInfoWindow: boolean;
+    infoWindowAttr?: ListAttributeValue<string>;
     infoWindowNameLabel: string;
     onClickButtonClass: string;
     onClickButtonLabel: string;
@@ -117,8 +117,8 @@ export interface GoogleMapsCustomMarkerPreviewProps {
     opacityAttr: string;
     markerSymbolAttr: string;
     markerSizeAttr: string;
-    infoWindowAttr: string;
     disableInfoWindow: boolean;
+    infoWindowAttr: string;
     infoWindowNameLabel: string;
     onClickButtonClass: string;
     onClickButtonLabel: string;
