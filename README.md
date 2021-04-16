@@ -37,7 +37,7 @@ This widget uses React / TypeScript and the new pluggable widgets API. Additiona
 	* Appearance: Enum attribute / Color + Symbol + Size attribute: 
 		* If Enum attribute is selected, configure 'Enum based marker images' as well. The can be free format; doesn't need predefined values. The enumeration key used in the attribute does have to agree with the 'Enum key' of the configured 'Enum based marker images'.
 		* If no Enum attribute selected then configure at least Color and Symbol attribute and optional the Size attribute. 
-			* Symbol attribute; please use an enumeration attribute with possible keys: 'MARKER','CIRCLE','DIAMOND','TRAINGLE','STAR','CROSS'.
+			* Symbol attribute; please use an enumeration attribute with possible keys: 'MARKER','CIRCLE','DIAMOND','TRIANGLE','STAR','CROSS'.
 			* Size attribute; please use an enumeration attribute with possible keys: 'XXS','XS','S','M','L'
 
 * All other features 
