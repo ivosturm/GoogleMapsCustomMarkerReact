@@ -269,7 +269,7 @@ export class Map extends React.Component<GoogleMapsPropsExtended,MapState> {
                 });
             }
             // if only object is new, shouldn't have coordinates
-            if (this.props.locations && this.props.locations[0].isNew && this.props.zoomToCurrentLocation){
+            if (this.props.locations && this.props.locations.length && this.props.locations[0].isNew && this.props.zoomToCurrentLocation){
                 const location = this.props.locations[0];  
                 const symbol = createSymbol(location);
                 this.createMarkerCurrentLocation(map,symbol);
@@ -296,14 +296,15 @@ export class Map extends React.Component<GoogleMapsPropsExtended,MapState> {
                 } 
             }
         }
+        const position = {
+            lat : this.props.defaultLat ? Number(this.props.defaultLat) : 0,
+            lng : this.props.defaultLng ? Number(this.props.defaultLng) : 0
+        }
+
         // one existing single object
         if (this.props.locations && this.props.locations.length == 1){
             // if only object is new, shouldn't have coordinates, hence zoom to default
             if (this.props.locations[0].isNew){
-                let position = {
-                    lat : this.props.defaultLat ? Number(this.props.defaultLat) : 0,
-                    lng : this.props.defaultLng ? Number(this.props.defaultLng) : 0
-                }
                 // in case current location is used, zoom is already triggered when adding marker
                 if (!this.props.zoomToCurrentLocation){
                     console.debug(this.logNode + 'setting map to default position!');
@@ -318,8 +319,10 @@ export class Map extends React.Component<GoogleMapsPropsExtended,MapState> {
                 console.debug('overruling zoomlevel for single marker to: ' + this.props.lowestZoom);
                 map.setZoom(this.props.lowestZoom);
             }      
-        } else {
+        } else if (this.props.locations && this.props.locations.length > 1){
             map.fitBounds(mapBounds);
+        }  else {
+            map.setCenter(position);
         }      
         
     } 
