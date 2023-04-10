@@ -1,20 +1,26 @@
+/* eslint-disable linebreak-style */
+/* eslint-disable no-unused-expressions */
+/* eslint-disable array-callback-return */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable linebreak-style */
 import React, { createElement } from "react";
 import { Marker } from "@react-google-maps/api";
-import { DynamicValue, WebImage,ObjectItem,EditableValue} from "mendix";
+import { DynamicValue, WebImage, ObjectItem, EditableValue } from "mendix";
 import { addMarkerDragEvent, createSymbol } from "./MarkerUtils";
+import Big from "big.js";
 
 export interface Location {
     formattedAddress?: string;
     position: {
         lat: number;
         lng: number;
-    }
+    };
     name: string;
 }
 
 export interface MarkerProps extends Location {
     guid: string;
-    isNew:boolean;  
+    isNew: boolean;
     mxObject: ObjectItem;
     draggable: boolean;
     editable?: boolean;
@@ -22,13 +28,13 @@ export interface MarkerProps extends Location {
     visible: boolean;
     color: string;
     opacity: number;
-    iconImage : DynamicValue<WebImage>
+    iconImage: DynamicValue<WebImage>;
     symbol: string;
     size: string;
-    onClick?:any;
-    latAttrUpdate?: EditableValue<BigJs.Big | string>;
-    lngAttrUpdate?: EditableValue<BigJs.Big | string>;
-    formattedAddressAttr? : EditableValue<string>
+    onClick?: any;
+    latAttrUpdate?: EditableValue<Big | string>;
+    lngAttrUpdate?: EditableValue<Big | string>;
+    formattedAddressAttr?: EditableValue<string>;
     url?: string;
 }
 
@@ -36,23 +42,21 @@ export interface MarkerState {
     marker: google.maps.Marker;
 }
 
-export default class MarkerComponent extends React.Component<MarkerProps,MarkerState>  {
+export default class MarkerComponent extends React.Component<MarkerProps, MarkerState> {
     constructor(props: MarkerProps) {
         super(props);
         this.state = {
             marker: {} as google.maps.Marker
         };
-        this.onLoad = this.onLoad.bind(this); 
-
+        this.onLoad = this.onLoad.bind(this);
     }
-    onLoad = (marker: google.maps.Marker) => {  
-
+    onLoad = (marker: google.maps.Marker) => {
         this.setState({
-            marker : marker
+            marker
         });
-        addMarkerDragEvent(marker,this.props.latAttrUpdate,this.props.lngAttrUpdate,this.props.formattedAddressAttr);
+        addMarkerDragEvent(marker, this.props.latAttrUpdate, this.props.lngAttrUpdate, this.props.formattedAddressAttr);
     };
-    /*onClick = (e:any) => {
+    /* onClick = (e:any) => {
         if (e){
             console.dir(this.props);
 
@@ -73,26 +77,24 @@ export default class MarkerComponent extends React.Component<MarkerProps,MarkerS
             return true;
         }
     }*/
-    render(){
-        
+    render() {
         if (this.props.url) {
             const style = { backgroundImage: `url(${this.props.url})` };
 
-            return <div className="widget-google-maps-marker-url" style={style}></div>
+            return <div className="widget-google-maps-marker-url" style={style}></div>;
         }
         const symbol = createSymbol(this.props);
-           
-        return (<Marker
-                    onLoad={this.onLoad}
-                    key={this.props.guid}
-                    clusterer={this.props.clusterer}
-                    position={this.props.position}
-                    onClick={this.props.onClick}
-                    draggable={this.props.draggable}
-                    icon={symbol}               
-                >
-            </Marker>
-        )
+
+        return (
+            <Marker
+                onLoad={this.onLoad}
+                key={this.props.guid}
+                clusterer={this.props.clusterer}
+                position={this.props.position}
+                onClick={this.props.onClick}
+                draggable={this.props.draggable}
+                icon={symbol}
+            ></Marker>
+        );
     }
 }
-

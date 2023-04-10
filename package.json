@@ -1,16 +1,16 @@
 {
   "name": "googlemapscustommarker",
   "widgetName": "GoogleMapsCustomMarker",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "An extension to the default Mendix Maps widget for showing point locations on a Google Map. It offers heaps of extra features like dropping/dragging and clustering",
-  "copyright": "Apache v2",
+  "copyright": "MIT",
   "author": "Ivo Sturm",
   "config": {
     "projectPath": "../..//",
     "mendixHost": "http://localhost:8080",
     "developmentPort": "3000"
   },
-  "packagePath": "first consulting",
+  "packagePath": "valcon",
   "scripts": {
     "start": "pluggable-widgets-tools start:server --open",
     "dev": "pluggable-widgets-tools start:web",
@@ -26,12 +26,14 @@
     "@types/big.js": "^4.0.5",
     "@types/classnames": "^2.2.4",
     "@types/googlemaps": "^3.43.3",
-    "@types/react": "~16.9.0",
-    "@types/react-dom": "~16.9.0"
+    "@types/react": "^17.0.1",
+    "@types/react-dom": "^17.0.1"
   },
   "dependencies": {
-    "@react-google-maps/api": "^2.1.1",
+    "@react-google-maps/api": "^2.18.1",
     "classnames": "^2.2.6",
-    "googlemaps": "^1.12.0"
+    "googlemaps": "^1.12.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   }
 }

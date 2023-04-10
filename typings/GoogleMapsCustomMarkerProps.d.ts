@@ -3,8 +3,8 @@
  * WARNING: All changes made to this file will be overwritten
  * @author Mendix UI Content Team
  */
-import { CSSProperties } from "react";
-import { DynamicValue, EditableValue, ListValue, ListActionValue, ListAttributeValue, WebImage } from "mendix";
+import { ComponentType, CSSProperties } from "react";
+import { ActionValue, DynamicValue, EditableValue, ListValue, ListActionValue, ListAttributeValue, ListWidgetValue, WebImage } from "mendix";
 
 export type DefaultMapTypeEnum = "ROADMAP" | "SATELLITE" | "HYBRID" | "TERRAIN";
 
@@ -19,6 +19,7 @@ export interface LegendEntriesType {
     legendEntryName: string;
     legendEntryIcon: LegendEntryIconEnum;
     legendEntryColor: string;
+    legendOnClick?: ActionValue;
 }
 
 export type LineTypeEnum = "Normal" | "Dotted" | "Dashed";
@@ -34,6 +35,7 @@ export interface LegendEntriesPreviewType {
     legendEntryName: string;
     legendEntryIcon: LegendEntryIconEnum;
     legendEntryColor: string;
+    legendOnClick: {} | null;
 }
 
 export interface GoogleMapsCustomMarkerContainerProps {
@@ -62,11 +64,8 @@ export interface GoogleMapsCustomMarkerContainerProps {
     opacityAttr?: ListAttributeValue<BigJs.Big>;
     markerSymbolAttr?: ListAttributeValue<string>;
     markerSizeAttr?: ListAttributeValue<string>;
+    infoWindowWidget?: ListWidgetValue;
     disableInfoWindow: boolean;
-    infoWindowAttr?: ListAttributeValue<string>;
-    infoWindowNameLabel: string;
-    onClickButtonClass: string;
-    onClickButtonLabel: string;
     onClick?: ListActionValue;
     enableMarkerClusterer: boolean;
     MCGridSize: number;
@@ -117,11 +116,8 @@ export interface GoogleMapsCustomMarkerPreviewProps {
     opacityAttr: string;
     markerSymbolAttr: string;
     markerSizeAttr: string;
+    infoWindowWidget: { widgetCount: number; renderer: ComponentType };
     disableInfoWindow: boolean;
-    infoWindowAttr: string;
-    infoWindowNameLabel: string;
-    onClickButtonClass: string;
-    onClickButtonLabel: string;
     onClick: {} | null;
     enableMarkerClusterer: boolean;
     MCGridSize: number | null;
