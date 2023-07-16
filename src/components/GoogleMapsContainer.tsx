@@ -44,10 +44,10 @@ const containerStyle = {
 
 export interface GoogleMapsWidgetProps {
     markerObjects?: ListValue;
-    latAttr?: ListAttributeValue<Big | string>;
-    latAttrUpdate?: EditableValue<Big | string>;
-    lngAttr?: ListAttributeValue<Big | string>;
-    lngAttrUpdate?: EditableValue<Big | string>;
+    latAttr?: ListAttributeValue<string | Big>;
+    latAttrUpdate?: EditableValue<string | Big>;
+    lngAttr?: ListAttributeValue<string | Big>;
+    lngAttrUpdate?: EditableValue<string | Big>;
     formattedAddressAttrUpdate?: EditableValue<string>;
     draggableInEditMode: boolean;
     colorAttr?: ListAttributeValue<string>;
@@ -195,22 +195,22 @@ export default class GoogleMapsContainer extends Component<GoogleMapsContainerPr
                 }
             }
             this.mxObjects = datasource.items;
-            this.mxObjects.map(mxObject => {
+            this.mxObjects.map((mxObject) => {
                 // due to bug in Mendix Pluggable Widget API, readOnly field is always true for datasource objects, hence use attribute
                 /*
                 draggable = /*!this.props.coordinatesStringAttr(mxObject).readOnly;
                 editable = !this.props.coordinatesStringAttr(mxObject).readOnly;
                 */
                 if (this.props.latAttr && this.props.lngAttr){
-                    lat = Number(this.props.latAttr(mxObject).value);
-                    lng = Number(this.props.lngAttr(mxObject).value);
+                    lat = Number(this.props.latAttr.get(mxObject).value);
+                    lng = Number(this.props.lngAttr.get(mxObject).value);
                 }
 
                 if (!lat) {
                     isNew = true;
                 }
 
-                this.props.enumAttr ? (icon = String(this.props.enumAttr(mxObject).value)) : null;
+                this.props.enumAttr ? (icon = String(this.props.enumAttr.get(mxObject).value)) : null;
 
                 if (this.props.enumAttr && mxObject) {
                     this.props.markerImages.filter(image => {
@@ -223,14 +223,14 @@ export default class GoogleMapsContainer extends Component<GoogleMapsContainerPr
                     });
                 }
                 !this.props.enumAttr && this.props.markerSymbolAttr
-                    ? (symbol = String(this.props.markerSymbolAttr(mxObject).value))
+                    ? (symbol = String(this.props.markerSymbolAttr.get(mxObject).value))
                     : markerSymbolDefault;
                 this.props.markerSizeAttr
-                    ? (size = String(this.props.markerSizeAttr(mxObject).value))
+                    ? (size = String(this.props.markerSizeAttr.get(mxObject).value))
                     : markerSizeDefault;
 
-                this.props.colorAttr ? (color = String(this.props.colorAttr(mxObject).value)) : markerColorDefault;
-                this.props.opacityAttr ? (opacity = Number(this.props.opacityAttr(mxObject).value)) : 0;
+                this.props.colorAttr ? (color = String(this.props.colorAttr.get(mxObject).value)) : markerColorDefault;
+                this.props.opacityAttr ? (opacity = Number(this.props.opacityAttr.get(mxObject).value)) : 0;
                 this.props.formattedAddressAttrUpdate
                     ? (formattedAddress = String(this.props.formattedAddressAttrUpdate.value))
                     : "";
@@ -303,7 +303,7 @@ export default class GoogleMapsContainer extends Component<GoogleMapsContainerPr
         }
 
         return (
-            <div style={{ height: "90vh", width: "0%" }} className={"googlemaps-custommarker"}>
+            <div className={"googlemaps-custommarker"}>
                 <LoadScriptComponent apiKey={this.props.apiKey} libraries={[libraries]}>
                     <Map
                         mapContainerStyle={containerStyle}

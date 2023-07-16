@@ -1,29 +1,17 @@
 {
-  "extends": "./node_modules/@mendix/pluggable-widgets-tools/configs/tsconfig.base.json"  ,
+  "extends": "./node_modules/@mendix/pluggable-widgets-tools/configs/tsconfig.base.json",
   "compilerOptions": {
-	"types": ["react", "jest"],
-    "baseUrl": ".",
-    "rootDir": "./",
-    "outDir": "dist/tsc/",
+    "baseUrl": "./",
     "noEmitOnError": true,
-    "sourceMap": true,
-    "target": "es5",
-    "lib": [ "es2015", "dom" ],
-	  "jsx": "react",
-	  "esModuleInterop": true,
-    "moduleResolution": "node",
-    "declaration": false,
-    "removeComments": true,
-    "noLib": false,
-    "watch": false,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "strict": true,
-    "skipLibCheck": false,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "strictPropertyInitialization": false
+    "declaration": true, 
+    "emitDeclarationOnly": true,
+    "declarationDir": "./dist/types",
+    "outDir": "dist/tsc/"
   },
+  "include": [
+    "./src",
+    "./typings"
+  ],
   "exclude": [
     "dist/",
     "node_modules/"
