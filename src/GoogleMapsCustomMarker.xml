@@ -68,7 +68,7 @@
 					<description>The latitude attribute.</description>
 					<attributeTypes>
 						<attributeType name="Decimal"/>
-						<attributeType name="String"/>
+						<!-- <attributeType name="String"/> -->
 					</attributeTypes>
 				</property>
 				<property key="latAttrUpdate" type="attribute" required="false">
@@ -77,7 +77,7 @@
 					</description>
 					<attributeTypes>
 						<attributeType name="Decimal"/>
-						<attributeType name="String"/>
+						<!-- <attributeType name="String"/> -->
 					</attributeTypes>
 				</property>
 				<property key="lngAttr" type="attribute" required="true" dataSource="markerObjects">

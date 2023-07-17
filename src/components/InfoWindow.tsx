@@ -36,7 +36,7 @@ export default class InfoWindowComponent extends Component<InfoWindowProps> {
     render(){  
         let innerWidget: React.ReactNode;
         if (this.props.infoWindowWidget && this.props.mxObject) {
-            innerWidget = this.props.infoWindowWidget(this.props.mxObject);
+            innerWidget = this.props.infoWindowWidget.get(this.props.mxObject);
         }
         return (  <InfoWindow
         position={this.props.position}
