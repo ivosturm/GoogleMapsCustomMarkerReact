@@ -1,12 +1,35 @@
 {
-  "extends": "./node_modules/@mendix/pluggable-widgets-tools/configs/tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": "./",
     "noEmitOnError": true,
     "declaration": true, 
     "emitDeclarationOnly": true,
     "declarationDir": "./dist/types",
-    "outDir": "dist/tsc/"
+    "outDir": "dist/tsc/",
+
+    "sourceMap": true,
+    "module": "esnext",
+    "target": "es6",
+    "lib": ["esnext", "dom"],
+    "types": ["jest", "node"],
+    "moduleResolution": "node",
+    "noLib": false,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "strict": true,
+    "strictFunctionTypes": false,
+    "skipLibCheck": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "jsx": "react",
+    "jsxFactory": "createElement",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "useUnknownInCatchVariables": false,
+    "exactOptionalPropertyTypes": false,
+    "paths": {
+        "react-hot-loader/root": ["./hot-typescript.ts"]
+    }
   },
   "include": [
     "./src",
