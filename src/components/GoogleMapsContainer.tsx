@@ -4,7 +4,6 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable linebreak-style */
 import { Component, createElement } from "react";
-
 import {
     DynamicValue,
     WebImage,
@@ -28,7 +27,6 @@ import {
     MarkerImagesType
 } from "../../typings/GoogleMapsCustomMarkerProps";
 import { MarkerProps } from "./Marker";
-import Big from "big.js";
 
 export const markerColorDefault = "#E11D24";
 const markerSymbolDefault = "MARKER";
@@ -43,11 +41,13 @@ const containerStyle = {
 };
 
 export interface GoogleMapsWidgetProps {
+    mapWidth: number;
+    mapHeight: number;
     markerObjects?: ListValue;
-    latAttr?: ListAttributeValue<Big | string>;
-    latAttrUpdate?: EditableValue<Big | string>;
-    lngAttr?: ListAttributeValue<Big | string>;
-    lngAttrUpdate?: EditableValue<Big | string>;
+    latAttr?: ListAttributeValue<Big.Big | string>;
+    latAttrUpdate?: EditableValue<Big.Big | string>;
+    lngAttr?: ListAttributeValue<Big.Big | string>;
+    lngAttrUpdate?: EditableValue<Big.Big | string>;
     formattedAddressAttrUpdate?: EditableValue<string>;
     draggableInEditMode: boolean;
     colorAttr?: ListAttributeValue<string>;
@@ -55,7 +55,7 @@ export interface GoogleMapsWidgetProps {
     markerImages: MarkerImagesType[];
     markerSymbolAttr?: ListAttributeValue<string>;
     markerSizeAttr?: ListAttributeValue<string>;
-    opacityAttr?: ListAttributeValue<Big>;
+    opacityAttr?: ListAttributeValue<Big.Big>;
     lineTypeAttr?: ListAttributeValue<string>;
     defaultMapType: DefaultMapTypeEnum;
     apiKey: string;
@@ -163,6 +163,17 @@ export default class GoogleMapsContainer extends Component<GoogleMapsContainerPr
         }
     }
     render() {
+        // Initialize map dimensions
+        if (this.props.mapWidth === 10000) {
+            containerStyle.width = "100%";
+        } else {
+            containerStyle.width = this.props.mapWidth + "px";
+        }
+        if (this.props.mapHeight === 10000) {
+            containerStyle.height = "100vh";
+        } else {
+            containerStyle.height = this.props.mapHeight + "px";
+        }
         const datasource = this.props.markerObjects;
         if (!datasource || datasource.status !== ValueStatus.Available || !datasource.items) {
             return null;
@@ -202,15 +213,15 @@ export default class GoogleMapsContainer extends Component<GoogleMapsContainerPr
                 editable = !this.props.coordinatesStringAttr(mxObject).readOnly;
                 */
                 if (this.props.latAttr && this.props.lngAttr){
-                    lat = Number(this.props.latAttr(mxObject).value);
-                    lng = Number(this.props.lngAttr(mxObject).value);
+                    lat = Number(this.props.latAttr.get(mxObject).value);
+                    lng = Number(this.props.lngAttr.get(mxObject).value);
                 }
 
                 if (!lat) {
                     isNew = true;
                 }
 
-                this.props.enumAttr ? (icon = String(this.props.enumAttr(mxObject).value)) : null;
+                this.props.enumAttr ? (icon = String(this.props.enumAttr.get(mxObject).value)) : null;
 
                 if (this.props.enumAttr && mxObject) {
                     this.props.markerImages.filter(image => {
@@ -223,14 +234,14 @@ export default class GoogleMapsContainer extends Component<GoogleMapsContainerPr
                     });
                 }
                 !this.props.enumAttr && this.props.markerSymbolAttr
-                    ? (symbol = String(this.props.markerSymbolAttr(mxObject).value))
+                    ? (symbol = String(this.props.markerSymbolAttr.get(mxObject).value))
                     : markerSymbolDefault;
                 this.props.markerSizeAttr
-                    ? (size = String(this.props.markerSizeAttr(mxObject).value))
+                    ? (size = String(this.props.markerSizeAttr.get(mxObject).value))
                     : markerSizeDefault;
 
-                this.props.colorAttr ? (color = String(this.props.colorAttr(mxObject).value)) : markerColorDefault;
-                this.props.opacityAttr ? (opacity = Number(this.props.opacityAttr(mxObject).value)) : 0;
+                this.props.colorAttr ? (color = String(this.props.colorAttr.get(mxObject).value)) : markerColorDefault;
+                this.props.opacityAttr ? (opacity = Number(this.props.opacityAttr.get(mxObject).value)) : 0;
                 this.props.formattedAddressAttrUpdate
                     ? (formattedAddress = String(this.props.formattedAddressAttrUpdate.value))
                     : "";
@@ -303,7 +314,7 @@ export default class GoogleMapsContainer extends Component<GoogleMapsContainerPr
         }
 
         return (
-            <div style={{ height: "90vh", width: "0%" }} className={"googlemaps-custommarker"}>
+            <div style={{ height: containerStyle.height, width: containerStyle.width }} className={"googlemaps-custommarker"}>
                 <LoadScriptComponent apiKey={this.props.apiKey} libraries={[libraries]}>
                     <Map
                         mapContainerStyle={containerStyle}

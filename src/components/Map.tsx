@@ -11,7 +11,6 @@ import { DefaultMapTypeEnum, LegendEntriesType, MarkerImagesType } from "../../t
 import MarkerComponent, { MarkerProps } from "./Marker";
 import Legend from "./Legend";
 import SearchBox from "./SearchBox";
-import Big from "big.js";
 
 export interface InfoWindowStateProps {
     name: string;
@@ -203,7 +202,7 @@ export class Map extends React.Component<GoogleMapsPropsExtended, MapState> {
         }
         // else trigger action call directly
         else if (mxObject && this.props.int_onClick) {
-            this.props.int_onClick(mxObject).execute();
+            this.props.int_onClick.get(mxObject).execute();
         }
     }
     // close legend pane when clicking (not dragging) on map if opened

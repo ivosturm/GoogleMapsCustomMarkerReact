@@ -1,6 +1,5 @@
 
 import  { Component, ReactNode, createElement } from "react";
-
 import { GoogleMapsCustomMarkerContainerProps } from "../typings/GoogleMapsCustomMarkerProps";
 
 import "./ui/GoogleMapsCustomMarker.css";
@@ -10,6 +9,8 @@ export default class GoogleMapsCustomMarker extends Component<GoogleMapsCustomMa
     render(): ReactNode {
         return (
             <GoogleMapsContainer
+                mapHeight={this.props.mapHeight}
+                mapWidth={this.props.mapWidth}
                 dataSource={"XPath"}
                 markerObjects={this.props.markerObjects}
                 defaultMapType={this.props.defaultMapType}

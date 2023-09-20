@@ -1,9 +1,9 @@
 {
   "name": "googlemapscustommarker",
   "widgetName": "GoogleMapsCustomMarker",
-  "version": "1.2.0",
+  "version": "1.0.0",
   "description": "An extension to the default Mendix Maps widget for showing point locations on a Google Map. It offers heaps of extra features like dropping/dragging and clustering",
-  "copyright": "MIT",
+  "copyright": "Apache v2",
   "author": "Ivo Sturm",
   "config": {
     "projectPath": "../..//",
@@ -22,18 +22,30 @@
   },
   "license": "Apache-2.0",
   "devDependencies": {
-    "@mendix/pluggable-widgets-tools": "^8.14.0",
-    "@types/big.js": "^4.0.5",
+    "@mendix/pluggable-widgets-tools": "^10.0.1",
+    "@types/big.js": "^6.2.0",
     "@types/classnames": "^2.2.4",
-    "@types/googlemaps": "^3.43.3",
-    "@types/react": "^17.0.1",
-    "@types/react-dom": "^17.0.1"
+    "@types/googlemaps": "^3.43.3"
   },
   "dependencies": {
     "@react-google-maps/api": "^2.18.1",
     "classnames": "^2.2.6",
-    "googlemaps": "^1.12.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "googlemaps": "^1.12.0"
+  },
+  "overrides": {
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-native": "0.70.7",
+    "@types/react": "18.0.0",
+    "@types/react-dom": "18.0.0",
+    "@types/react-native": "0.70.0"
+  },
+  "resolutions": {
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-native": "0.70.7",
+    "@types/react": "18.0.0",
+    "@types/react-dom": "18.0.0",
+    "@types/react-native": "0.70.0"
   }
 }

@@ -7,7 +7,6 @@ import React, { createElement } from "react";
 import { Marker } from "@react-google-maps/api";
 import { DynamicValue, WebImage, ObjectItem, EditableValue } from "mendix";
 import { addMarkerDragEvent, createSymbol } from "./MarkerUtils";
-import Big from "big.js";
 
 export interface Location {
     formattedAddress?: string;

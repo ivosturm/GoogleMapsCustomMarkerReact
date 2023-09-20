@@ -4,8 +4,8 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable linebreak-style */
 import { EditableValue } from "mendix";
-import { Big } from "big.js";
 import { MarkerProps } from "./Marker";
+import { Big } from "big.js";
 
 export interface IconProps {
     path: string | google.maps.SymbolPath;

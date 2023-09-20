@@ -11,6 +11,14 @@
   <properties>
 		<propertyGroup caption="Behavior">
 			<propertyGroup caption="Map">
+				<property key="mapHeight" type="integer" defaultValue="600">
+                    <caption>Height</caption>
+                    <description>The map's height in pixels. Setting it to 10.000 will set it to 100 of the view height and resize it dynamically when zooming.</description> 
+                </property>
+                <property key="mapWidth" type="integer" defaultValue="900">
+                    <caption>Width</caption>
+                    <description>The map's width in pixels. Setting it to 10.000 will set it to 100 % of the width of the screen and will resize it dynamically when zooming.</description> 
+                </property>
 				<property key="apiAccessKey" type="string" required="false">
 					<caption>Maps API Access Key</caption>
 					<description>For using in Production, a Google Maps API key will be needed. For development purposes it can be left empty, but will generate text overlays 'For development purposes only' by Google</description>
