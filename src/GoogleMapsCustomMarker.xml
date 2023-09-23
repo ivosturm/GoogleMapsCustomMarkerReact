@@ -53,7 +53,7 @@
 			<propertyGroup caption="Zoom">
 				<property key="zoomToCurrentLocation" type="boolean" defaultValue="false">
 					<caption>Zoom to Current Location</caption>
-					<description>When set to 'Yes' the browser will try to get the current location. If succesfull that loction will be used to zoom. In case an object can be drawn, the marker will already be placed at the current location.</description> 
+					<description>When set to 'Yes' the browser will try to get the current location. If succesfull that location will be used to zoom. In case an object can be drawn, the marker will already be placed at the current location.</description> 
 				</property>
 				<property key="overruleFitBoundsZoom" type="boolean" defaultValue="false">
 					<caption>Overrule single item zoom level</caption>
