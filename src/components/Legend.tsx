@@ -73,7 +73,7 @@ export default class Legend extends React.Component<LegendProps, LegendState> {
         } else {
             this.props.legendEntries ? (legendEntriesSize = this.props.legendEntries?.length) : 0;
         }
-        console.debug(this.logNode + " rendering legend with " + legendEntryType);
+        console.debug(this.logNode + "rendering legend with " + legendEntryType);
 
         const entrySize = 30;
         const imgStyle = { height: "18px", width: "18px" };

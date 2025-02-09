@@ -4,9 +4,12 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable linebreak-style */
 import React, { createElement } from "react";
-import { Marker } from "@react-google-maps/api";
-import { DynamicValue, WebImage, ObjectItem, EditableValue } from "mendix";
-import { addMarkerDragEvent, createSymbol } from "./MarkerUtils";
+import { AdvancedMarker } from '@vis.gl/react-google-maps';
+import { ObjectItem, EditableValue, DynamicValue, WebImage } from "mendix";
+import { onDragEnd, pinSymbolPath } from "./MarkerUtils";
+import { LegendEntryIconEnum } from "typings/GoogleMapsCustomMarkerProps";
+
+export type sizeEnum = "XXS" | "XS" | "S" | "M" | "L" | "XL";
 
 export interface Location {
     formattedAddress?: string;
@@ -25,75 +28,90 @@ export interface MarkerProps extends Location {
     editable?: boolean;
     clusterer?: any;
     visible: boolean;
-    color: string;
-    opacity: number;
-    iconImage: DynamicValue<WebImage>;
-    symbol: string;
-    size: string;
-    onClick?: any;
+    iconImage?: DynamicValue<WebImage>;
+    onClick?: (e: google.maps.MapMouseEvent) => void;
     latAttrUpdate?: EditableValue<Big | string>;
     lngAttrUpdate?: EditableValue<Big | string>;
     formattedAddressAttr?: EditableValue<string>;
     url?: string;
+    size?: sizeEnum;
+    color?: string;
+    symbol?: LegendEntryIconEnum;
+    opacity?: number;
 }
 
 export interface MarkerState {
     marker: google.maps.Marker;
 }
 
-export default class MarkerComponent extends React.Component<MarkerProps, MarkerState> {
-    constructor(props: MarkerProps) {
-        super(props);
-        this.state = {
-            marker: {} as google.maps.Marker
-        };
-        this.onLoad = this.onLoad.bind(this);
-    }
-    onLoad = (marker: google.maps.Marker) => {
-        this.setState({
-            marker
-        });
-        addMarkerDragEvent(marker, this.props.latAttrUpdate, this.props.lngAttrUpdate, this.props.formattedAddressAttr);
+const MarkerComponent: React.FC<MarkerProps> = (props) => {
+    
+    const logNode = "Google Maps Custom Marker (React) widget: MarkerComponent: ";
+    const sizeMap = {
+        XXS: { scale: 0.333, dim: 10 },
+        XS: { scale: 0.666, dim: 20 },
+        S: { scale: 1, dim: 30 },
+        M: { scale: 1.333, dim: 40 },
+        L: { scale: 1.666, dim: 50 },
+        XL: { scale: 2, dim: 60 }
     };
-    /* onClick = (e:any) => {
-        if (e){
-            console.dir(this.props);
+    
+    const defaultSize = { scale: 1.333, dim: 40 };
+    const { scale, dim } = sizeMap[props.size ?? "M"] || defaultSize;
 
-        }
-    };
-    onInfoWindowLoad = () => {
-        console.log('infoWindow: ');
+    let enumBasedSymbol = false;
+    let enumSymbolUri: string = "",
+    path: string = "";
+
+    if (props.iconImage && props.iconImage.value) {
+        enumBasedSymbol = true;
+        enumSymbolUri = props.iconImage.value.uri;
+    } else {
+        path = pinSymbolPath(props.symbol ?? "MARKER");
     }
-    onInfoWindowClose = () => {
 
-    };
-    shouldComponentUpdate(prevProps:any) {
-        if (prevProps.name == this.props.name && prevProps.position == this.props.position){
-            console.error('marker ' +  this.props.name + ' NOT updated!');
-            return false;
-        } else {
-            console.error('marker ' +  this.props.name + ' updated!');
-            return true;
-        }
-    }*/
-    render() {
-        if (this.props.url) {
-            const style = { backgroundImage: `url(${this.props.url})` };
+    return (
+        <AdvancedMarker
+            key={props.guid}
+            position={props.position}
+            onClick={(e: google.maps.MapMouseEvent) => {
+                console.debug(logNode + 'marker clicked');
+                if (props.onClick) {
+                    props.onClick(e);
+                }
+            }}
+            draggable={props.draggable}
+            onDragEnd={(e: google.maps.MapMouseEvent) => {
+                console.dir(e);
+                if (e.latLng) {
+                    onDragEnd(e.latLng, props.latAttrUpdate, props.lngAttrUpdate, props.formattedAddressAttr);
+                }
+            }}
+            >
 
-            return <div className="widget-google-maps-marker-url" style={style}></div>;
-        }
-        const symbol = createSymbol(this.props);
-
-        return (
-            <Marker
-                onLoad={this.onLoad}
-                key={this.props.guid}
-                clusterer={this.props.clusterer}
-                position={this.props.position}
-                onClick={this.props.onClick}
-                draggable={this.props.draggable}
-                icon={symbol}
-            ></Marker>
-        );
-    }
+                <div
+                    title={props.name + " (" + props.size + ")" + ", scale: " + scale + ", dim: " + dim + ", color: " + props.color}
+                >
+                    {!enumBasedSymbol ? (
+                    <svg
+                        width={dim * 2}
+                        height={dim * 2}
+                        transform={`scale(${scale})`}
+                        fill={props.color}
+                    >
+                        <path
+                            d={path}
+                            width={`${dim}px`}
+                            height={`${dim}px`}
+                            transform={`translate(${dim}, ${(3/2) * dim})`}
+                        ></path>
+                    </svg>) : 
+                    <img
+                        src={enumSymbolUri}
+                    ></img>}
+                </div>
+        </AdvancedMarker>
+    );
 }
+
+export default MarkerComponent;

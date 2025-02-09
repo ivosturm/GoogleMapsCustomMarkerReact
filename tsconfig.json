@@ -3,6 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "rootDir": "./",
+    "jsxFragmentFactory": "Fragment",
 	"types": ["react", "jest"],
     "target": "es5",
     "lib": [ "es2016", "dom" ],

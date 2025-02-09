@@ -15,6 +15,7 @@ export default class GoogleMapsCustomMarker extends Component<GoogleMapsCustomMa
                 markerObjects={this.props.markerObjects}
                 defaultMapType={this.props.defaultMapType}
                 latAttr={this.props.latAttr}
+                displayNameAttr={this.props.displayNameAttr}
                 latAttrUpdate={this.props.latAttrUpdate}
                 lngAttr={this.props.lngAttr}
                 lngAttrUpdate={this.props.lngAttrUpdate}
@@ -31,6 +32,7 @@ export default class GoogleMapsCustomMarker extends Component<GoogleMapsCustomMa
                 enableMarkerClusterer={this.props.enableMarkerClusterer}
                 MCGridSize={this.props.MCGridSize}
                 MCMaxZoom={this.props.MCMaxZoom}
+                MCInfoWindowText={this.props.MCInfoWindowText}
                 opt_drag={this.props.opt_drag}
                 opt_mapcontrol={this.props.opt_mapcontrol}
                 opt_scroll={this.props.opt_scroll}

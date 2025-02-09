@@ -1,36 +1,40 @@
-/* eslint-disable linebreak-style */
-/* eslint-disable no-unused-expressions */
-/* eslint-disable array-callback-return */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-/* eslint-disable linebreak-style */
-import React, { createElement } from "react";
+import {useRef, useEffect, useState, createElement} from 'react';
+import {useMapsLibrary} from '@vis.gl/react-google-maps';
+import { PositionProps } from './MarkerUtils';
 
-interface SearchBoxProps {
-    placeholder?: string;
-    width: number;
-    height: number;
+export interface SearchBoxProps {
+  onPlaceSelect: (place: google.maps.places.PlaceResult | null) => void;
+  onSearchBoxMounted: (searchBox: google.maps.places.SearchBox) => void;
+  center?: PositionProps;
+  placeholder?: string;
 }
 
-export default class SearchBox extends React.Component<SearchBoxProps> {
-    logNode: string;
-    constructor(props: SearchBoxProps) {
-        super(props);
-        this.logNode = "Google Maps Custom Marker (React) widget: SearchBox Component: ";
-    }
-    render() {
-        console.debug(this.logNode + " rendering SearchBox!");
+export const SearchBox = ({onPlaceSelect, onSearchBoxMounted, center, placeholder}: SearchBoxProps) => {
+  const [searchBox, setSearchBox] = useState<google.maps.places.SearchBox | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const places = useMapsLibrary('places');
 
-        const imgStyle = { height: this.props.height + "px", width: this.props.width + "px" };
+  const logNode = "Google Maps Custom Marker (React) widget: SearchBox: ";
 
-        return (
-            <input
-                id="pac-input"
-                data-dojo-attach-point="searchBoxContainer"
-                className="gm-searchbox-input"
-                type="text"
-                placeholder={this.props.placeholder}
-                style={imgStyle}
-            ></input>
-        );
-    }
-}
+  useEffect(() => {
+    if (!places || !inputRef.current) return;
+    const defaultBounds = new google.maps.LatLngBounds(center);
+
+    const options = {bounds: defaultBounds, placeholder: placeholder};
+    const searchBoxInstance = new places.SearchBox(inputRef.current, options);
+    console.debug(logNode + "searchBox created");
+    setSearchBox(searchBoxInstance);
+    onSearchBoxMounted(searchBoxInstance);
+  }, [places]);
+
+  useEffect(() => {
+    if (!searchBox) return;
+
+  }, [onPlaceSelect, searchBox]);
+
+  return (
+    <div className="searchbox-container" >
+      <input id="pac-input" ref={inputRef} placeholder={placeholder} />
+    </div>
+  )
+};

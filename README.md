@@ -1,17 +1,9 @@
 ## GoogleMapsCustomMarker
 An extension to the default Mendix Maps widget for showing point locations on a Google Map. It offers heaps of extra features like dropping/dragging, geocoding, marker clustering and determining current location. See all features in action here:
 
-https://googlemapscustomma.mxapps.io/index.html?profile=Responsive
-
-This widget is a rewrite of the original GoogleMapsCustomMarker widget, originally based on the Dojo framework, see https://marketplace.mendix.com/link/component/43162
+https://googlemapsmarker100-sandbox.mxapps.io/index.html
 
 This widget uses React / TypeScript and the new pluggable widgets API. Additional features:
-
-* Determine current location
-* Support for all datasources, even nanoflows;
-* Support for all types of on click behavior when clicking on a Marker;
-* Editability based on Mendix Studio Pro, respecting entity access rights;
-
 
 ## Features
 * Drawing and dragging marker. In the process the location is reverse geocoded and all possible addresses retrieved.
@@ -21,6 +13,7 @@ This widget uses React / TypeScript and the new pluggable widgets API. Additiona
 * Marker clustering when zooming out
 * Search box for easy navigation to known address
 * Determining current location;
+* Fully customizable info winfow (Mendix Data View)
 
 ## Usage
 * API Key: 
@@ -47,14 +40,15 @@ This widget uses React / TypeScript and the new pluggable widgets API. Additiona
 	4. SearchBox
 	5. Lines (Dotted/Dashed/with/without Markers)
 	6. Location based on current location
+	7. Customizable Info Window (Mendix Data View)
 	
 	should be self explanatory. A print screen for settings per feature is added in the Mendix Marketplace.
 
 ## Demo project
-https://googlemapscustomma.mxapps.io/index.html?profile=Responsive
+https://googlemapsmarker100-sandbox.mxapps.io/index.html
 
 ## Issues, suggestions and feature requests
-This version uses the React Google Maps API library for creating React elements, without hooks for now. Currently there is a shortcoming in the Mendix Pluggable widgets API, not being able to directly change an attribute loaded by data source, hence the latitude and longitude attributes have to be selected twice in the widget settings, if updates on latitude/longitude need to be automated by the widget via dragging.
+This version uses the vis.gl/react-google-maps library for creating React elements. Currently there is a shortcoming in the Mendix Pluggable widgets API, not being able to directly change an attribute loaded by data source, hence the latitude and longitude attributes have to be selected twice in the widget settings, if updates on latitude/longitude need to be automated by the widget via dragging.
 
 ## Development and contribution
-Thanks to the team maintaining the React Google Maps API library, see https://www.npmjs.com/package/@react-google-maps/api
+Thanks to the team maintaining the React Google Maps API library, see https://www.npmjs.com/package/@vis.gl/react-google-maps

@@ -71,6 +71,13 @@
 					<caption>Data source</caption>
 					<description/>
 				</property>
+				<property key="displayNameAttr" type="attribute" required="false" dataSource="markerObjects">
+					<caption>Display Name attribute</caption>
+					<description>The display name (if existing) of the marker. Can be the address.</description>
+					<attributeTypes>
+						<attributeType name="String"/>
+					</attributeTypes>
+				</property>
 				<property key="latAttr" type="attribute" required="true" dataSource="markerObjects">
 					<caption>Latitude attribute</caption>
 					<description>The latitude attribute.</description>
@@ -201,6 +208,10 @@
 			<property key="MCMaxZoom" type="integer" defaultValue="18">
 				<caption>Maximum Zoom</caption>
 				<description>Determines the maximum zoomed-in level at which clustering is done.</description> 
+			</property>  
+			<property key="MCInfoWindowText" type="string" defaultValue="features. Zoom in to explore.">
+				<caption>Infowindow Text</caption>
+				<description>Determines the text after the amount of features in the markercluster.</description> 
 			</property>  
 		</propertyGroup>
 		<propertyGroup caption="Legend">

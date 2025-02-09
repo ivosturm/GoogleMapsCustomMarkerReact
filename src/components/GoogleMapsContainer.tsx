@@ -3,7 +3,7 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable linebreak-style */
-import { Component, createElement } from "react";
+import { createElement } from "react";
 import {
     DynamicValue,
     WebImage,
@@ -16,10 +16,11 @@ import {
     ValueStatus
 } from "mendix";
 
-import { isAttributeEditable, PositionProps, setLineStyleOptions } from "./MarkerUtils";
-import { Map } from "./Map";
+import { APIProvider } from '@vis.gl/react-google-maps';
 
-import { LoadScriptComponent } from "./LoadScriptComponent";
+import { isAttributeEditable, PositionProps, setLineStyleOptions } from "./MarkerUtils";
+import Map from "./Map";
+
 import {
     DefaultMapTypeEnum,
     LegendEntriesType,
@@ -27,6 +28,8 @@ import {
     MarkerImagesType
 } from "../../typings/GoogleMapsCustomMarkerProps";
 import { MarkerProps } from "./Marker";
+import React from "react";
+import _ from "lodash";
 
 export const markerColorDefault = "#E11D24";
 const markerSymbolDefault = "MARKER";
@@ -34,7 +37,7 @@ const markerSizeDefault = "M";
 
 type DataSource = "static" | "context" | "XPath" | "microflow";
 
-const libraries = "drawing";
+const libraries = ["drawing", "marker"];
 const containerStyle = {
     width: "800px",
     height: "600px"
@@ -45,6 +48,7 @@ export interface GoogleMapsWidgetProps {
     mapHeight: number;
     markerObjects?: ListValue;
     latAttr?: ListAttributeValue<Big.Big | string>;
+    displayNameAttr?: ListAttributeValue<string>;
     latAttrUpdate?: EditableValue<Big.Big | string>;
     lngAttr?: ListAttributeValue<Big.Big | string>;
     lngAttrUpdate?: EditableValue<Big.Big | string>;
@@ -65,6 +69,7 @@ export interface GoogleMapsWidgetProps {
     enableMarkerClusterer: boolean;
     MCGridSize: number;
     MCMaxZoom: number;
+    MCInfoWindowText: string
     disableInfoWindow: boolean;
     int_onClick?: ListActionValue;
     infoWindowWidget?: ListWidgetValue;
@@ -103,262 +108,236 @@ interface GoogleMapsContainerProps extends GoogleMapsWidgetProps {
     locations: MarkerProps[];
 }
 
-export default class GoogleMapsContainer extends Component<GoogleMapsContainerProps, GoogleMapsContainerState> {
-    mxObjects: ObjectItem[] = [];
-    logNode: string;
-    _lineCoordinateList: PositionProps[] = [];
-    legendByIcons = false;
-    legendIcons: MarkerImagesType[] = [];
-    lineOptions: google.maps.PolylineOptions = {};
-    constructor(props: GoogleMapsContainerProps) {
-        super(props);
-        this.state = {
-            map: {} as google.maps.Map,
-            isLoaded: false,
-            editable: false
-        };
-        this.logNode = "Google Maps Custom Marker (React) widget: ";
+// Custom deep comparison function
+const areEqual = (prevProps: GoogleMapsContainerProps, nextProps: GoogleMapsContainerProps) => {
+    if (!prevProps.markerObjects || !prevProps.markerObjects.items || !nextProps.markerObjects || !nextProps.markerObjects.items || prevProps.markerObjects.items.length !== nextProps.markerObjects.items.length) {
+        console.debug("areEqual: false");
+        return false;
     }
-    componentDidMount() {
-        console.debug(this.logNode + "componentDidMount:", this.props);
-    }
-    shouldComponentUpdate(nextProps: GoogleMapsContainerProps, nextState: GoogleMapsContainerState) {
-        // no changes, no reload!G
-        if (nextState === this.state && nextProps === this.props) {
-            console.debug(this.logNode + "state nor props changed!");
-            return false;
-        } // props changes, reload!
-        else if (nextState === this.state && nextProps !== this.props) {
-            if (this.props.markerObjects?.status === "loading" && nextProps.markerObjects?.status === "available") {
-                console.debug(this.logNode + "props changed, Mendix objects available!");
-                return true;
-            } else if (
-                this.props.latAttrUpdate !== nextProps.latAttrUpdate ||
-                this.props.latAttr !== nextProps.latAttr ||
-                this.props.lngAttrUpdate !== nextProps.lngAttrUpdate ||
-                this.props.lngAttr !== nextProps.lngAttr ||
-                this.props.formattedAddressAttrUpdate !== nextProps.formattedAddressAttrUpdate
-            ) {
-                console.debug(this.logNode + "props changed, object coordinates updated via drawing!");
-                return false;
-            } else {
-                console.debug(this.logNode + "props changed");
-                return true;
-            }
-        } // state changed, don't reload if only map was added to state!
-        else if (nextState !== this.state && nextProps === this.props) {
-            if (!this.state.isLoaded && nextState.isLoaded) {
-                console.debug(this.logNode + "state isLoaded changed!");
-                return false;
-            } else {
-                console.debug("state changed!");
-                return true;
-            }
-        } else if (nextState !== this.state && nextProps !== this.props) {
-            console.debug(this.logNode + "state and props changed!");
-            return true;
-        } // shouldn't occur
-        else {
+
+    for (let i = 0; i < prevProps.markerObjects.items.length; i++) {
+        if (prevProps.markerObjects.items[i].id !== nextProps.markerObjects.items[i].id) {
+            console.debug("areEqual: false");
             return false;
         }
     }
-    render() {
-        // Initialize map dimensions
-        if (this.props.mapWidth === 10000) {
-            containerStyle.width = "100%";
-        } else {
-            containerStyle.width = this.props.mapWidth + "px";
-        }
-        if (this.props.mapHeight === 10000) {
-            containerStyle.height = "100vh";
-        } else {
-            containerStyle.height = this.props.mapHeight + "px";
-        }
-        const datasource = this.props.markerObjects;
-        if (!datasource || datasource.status !== ValueStatus.Available || !datasource.items) {
-            return null;
-        }
+    console.debug("areEqual: true");
+    return true;
+};
 
-        let draggable = false;
-        let isNew = false;
-        let lat = Number(this.props.defaultLat);
-        let lng = Number(this.props.defaultLng);
-        let opacity = 1;
-        let name = "New Marker";
-        let icon: string;
-        let iconImage: DynamicValue<WebImage>;
-        let color: string;
-        let symbol: string;
-        let size: string;
-        let formattedAddress: string;
+export const GoogleMapsContainer: React.FC<GoogleMapsContainerProps> = (props) => {
+    let mxObjects: ObjectItem[] = [];
+    const logNode: string = "Google Maps Custom Marker (React) widget: ";
+    let _lineCoordinateList: PositionProps[] = [];
+    let legendByIcons = false;
+    let lineOptions: google.maps.PolylineOptions = {};
+    
+    // Initialize map dimensions
+    if (props.mapWidth === 10000) {
+        containerStyle.width = "100%";
+    } else {
+        containerStyle.width = props.mapWidth + "px";
+    }
+    if (props.mapHeight === 10000) {
+        containerStyle.height = "100vh";
+    } else {
+        containerStyle.height = props.mapHeight + "px";
+    }
+    const datasource = props.markerObjects;
+    if (!datasource || datasource.status !== ValueStatus.Available || !datasource.items) {
+        return null;
+    }
 
-        // create locations
-        // showing of infowindow is handled via state, if shown, don't recreate already existing objects
-        if (datasource && datasource.items) {
-            let editable = false;
-            if (this.props.latAttrUpdate) {
-                if (isAttributeEditable("latAttrUpdate", this.props.latAttrUpdate)) {
-                    editable = true;
-                    if (this.props.draggableInEditMode) {
-                        draggable = true;
-                        console.debug(this.logNode + " marker is draggable.");
-                    }
+    let draggable = false,
+    isNew = false,
+    lat = Number(props.defaultLat),
+    lng = Number(props.defaultLng),
+    opacity = 1,
+    name = "Location",
+    icon: string,
+    iconImage: DynamicValue<WebImage>,
+    color: string,
+    symbol: string,
+    size: string,
+    formattedAddress: string;
+
+    // create locations
+    // showing of infowindow is handled via state, if shown, don't recreate already existing objects
+    if (datasource && datasource.items) {
+        let editable = false;
+        if (props.latAttrUpdate) {
+            if (isAttributeEditable("latAttrUpdate", props.latAttrUpdate)) {
+                editable = true;
+                if (props.draggableInEditMode) {
+                    draggable = true;
+                    console.debug(logNode +  "marker is draggable.");
                 }
             }
-            this.mxObjects = datasource.items;
-            this.mxObjects.map(mxObject => {
-                // due to bug in Mendix Pluggable Widget API, readOnly field is always true for datasource objects, hence use attribute
-                /*
-                draggable = /*!this.props.coordinatesStringAttr(mxObject).readOnly;
-                editable = !this.props.coordinatesStringAttr(mxObject).readOnly;
-                */
-                if (this.props.latAttr && this.props.lngAttr){
-                    lat = Number(this.props.latAttr.get(mxObject).value);
-                    lng = Number(this.props.lngAttr.get(mxObject).value);
-                }
+        }
+        mxObjects = datasource.items;
+        mxObjects.map(mxObject => {
+            // due to bug in Mendix Pluggable Widget API, readOnly field is always true for datasource objects, hence use attribute
+            /*
+            draggable = /*!props.coordinatesStringAttr(mxObject).readOnly;
+            editable = !props.coordinatesStringAttr(mxObject).readOnly;
+            */
+            if (props.latAttr && props.lngAttr){
+                lat = Number(props.latAttr.get(mxObject).value);
+                lng = Number(props.lngAttr.get(mxObject).value);
+            }
 
-                if (!lat) {
-                    isNew = true;
-                }
+            if (!lat) {
+                isNew = true;
+            }
 
-                this.props.enumAttr ? (icon = String(this.props.enumAttr.get(mxObject).value)) : null;
+            props.enumAttr ? (icon = String(props.enumAttr.get(mxObject).value)) : null;
 
-                if (this.props.enumAttr && mxObject) {
-                    this.props.markerImages.filter(image => {
-                        if (icon === image.enumKey) {
-                            // add icon to marker
-                            iconImage = image.enumImage;
-                            // add icon as legend entry
-                            this.legendByIcons = true;
-                        }
-                    });
-                }
-                !this.props.enumAttr && this.props.markerSymbolAttr
-                    ? (symbol = String(this.props.markerSymbolAttr.get(mxObject).value))
-                    : markerSymbolDefault;
-                this.props.markerSizeAttr
-                    ? (size = String(this.props.markerSizeAttr.get(mxObject).value))
-                    : markerSizeDefault;
-
-                this.props.colorAttr ? (color = String(this.props.colorAttr.get(mxObject).value)) : markerColorDefault;
-                this.props.opacityAttr ? (opacity = Number(this.props.opacityAttr.get(mxObject).value)) : 0;
-                this.props.formattedAddressAttrUpdate
-                    ? (formattedAddress = String(this.props.formattedAddressAttrUpdate.value))
-                    : "";
-
-                // build up internal array to being able to show a Polyline
-                // through all markers if requested with showLines = true
-                // exclude new markers as they could already have current location as position
-                this.props.showLines && !isNew ? this._lineCoordinateList.push({ lat, lng }) : null;
-
-                let indexObj = -1;
-
-                const markerObj = {
-                    guid: mxObject.id,
-                    isNew,
-                    mxObject,
-                    name,
-                    color,
-                    opacity,
-                    symbol,
-                    iconImage,
-                    size,
-                    visible: true,
-                    draggable,
-                    editable,
-                    position: {
-                        lat,
-                        lng
-                    },
-                    formattedAddress
-                } as MarkerProps;
-
-                indexObj = -1;
-                this.props.locations.filter((location, index) => {
-                    if (location.guid === markerObj.guid) {
-                        indexObj = index;
+            if (props.enumAttr && mxObject) {
+                props.markerImages.filter(image => {
+                    if (icon === image.enumKey) {
+                        // add icon to marker
+                        iconImage = image.enumImage;
+                        // add icon as legend entry
+                        legendByIcons = true;
                     }
                 });
-                // object exists -> remove old by index and add new
-                if (indexObj > -1) {
-                    this.props.locations.splice(indexObj, 1);
-                }
-                this.props.locations.push(markerObj);
-            });
-
-            // create style options for Normal / Dotted / Dashed line between markers
-            let icons: google.maps.IconSequence;
-
-            // normal lineStyle already defined in constructor
-            if (this.props.showLines && this.props.lineType !== "Normal") {
-                icons = {
-                    icon: setLineStyleOptions(this.props.lineType, 2),
-                    offset: "0",
-                    repeat: "20px"
-                };
-                this.lineOptions = {
-                    geodesic: true,
-                    strokeColor: this.props.lineColor,
-                    strokeOpacity: 0,
-                    strokeWeight: this.props.lineThickness,
-                    icons: [icons]
-                };
-            } else {
-                this.lineOptions = {
-                    geodesic: true,
-                    strokeColor: this.props.lineColor,
-                    strokeOpacity: Number(this.props.lineOpacity),
-                    strokeWeight: this.props.lineThickness
-                };
             }
-        }
+            !props.enumAttr && props.markerSymbolAttr
+                ? (symbol = String(props.markerSymbolAttr.get(mxObject).value))
+                : markerSymbolDefault;
+            props.markerSizeAttr
+                ? (size = String(props.markerSizeAttr.get(mxObject).value))
+                : markerSizeDefault;
 
-        return (
-            <div style={{ height: containerStyle.height, width: containerStyle.width }} className={"googlemaps-custommarker"}>
-                <LoadScriptComponent apiKey={this.props.apiKey} libraries={[libraries]}>
-                    <Map
-                        mapContainerStyle={containerStyle}
-                        defaultLat={this.props.defaultLat}
-                        defaultLng={this.props.defaultLng}
-                        locations={this.props.locations}
-                        lowestZoom={this.props.lowestZoom}
-                        latAttrUpdate={this.props.latAttrUpdate}
-                        lngAttrUpdate={this.props.lngAttrUpdate}
-                        formattedAddressAttrUpdate={this.props.formattedAddressAttrUpdate}
-                        enableMarkerClusterer={this.props.enableMarkerClusterer}
-                        MCGridSize={this.props.MCGridSize}
-                        MCMaxZoom={this.props.MCMaxZoom}
-                        int_disableInfoWindow={this.props.disableInfoWindow}
-                        infoWindowWidget={this.props.infoWindowWidget}
-                        zoomToCurrentLocation={this.props.zoomToCurrentLocation}
-                        overruleFitBoundsZoom={this.props.overruleFitBoundsZoom}
-                        defaultMapType={this.props.defaultMapType}
-                        opt_drag={this.props.opt_drag}
-                        opt_mapcontrol={this.props.opt_mapcontrol}
-                        opt_scroll={this.props.opt_scroll}
-                        opt_streetview={this.props.opt_streetview}
-                        opt_tilt={this.props.opt_tilt}
-                        opt_zoomcontrol={this.props.opt_zoomcontrol}
-                        styleArray={this.props.styleArray}
-                        legendEnabled={this.props.legendEnabled}
-                        legendHeaderText={this.props.legendHeaderText}
-                        legendIcons={this.props.markerImages}
-                        legendByIcons={this.legendByIcons}
-                        legendEntries={this.props.legendEntries}
-                        searchBoxEnabled={this.props.searchBoxEnabled}
-                        searchBoxPlaceholder={this.props.searchBoxPlaceholder}
-                        searchBoxWidth={this.props.searchBoxWidth}
-                        searchBoxHeight={this.props.searchBoxHeight}
-                        showLines={this.props.showLines}
-                        hideMarkers={this.props.hideMarkers}
-                        lineOptions={this.lineOptions}
-                        lineColor={this.props.lineColor}
-                        lineThickness={this.props.lineThickness}
-                        lineOpacity={this.props.lineOpacity}
-                        _lineCoordinateList={this._lineCoordinateList}
-                    ></Map>
-                </LoadScriptComponent>
-            </div>
-        );
+            props.colorAttr ? (color = String(props.colorAttr.get(mxObject).value)) : markerColorDefault;
+            props.opacityAttr ? (opacity = Number(props.opacityAttr.get(mxObject).value)) : 0;
+            props.formattedAddressAttrUpdate
+                ? (formattedAddress = String(props.formattedAddressAttrUpdate.value))
+                : "";   
+
+            props.displayNameAttr ? (name = String(props.displayNameAttr.get(mxObject).value)) : "Location";
+            // build up internal array to being able to show a Polyline
+            // through all markers if requested with showLines = true
+            // exclude new markers as they could already have current location as position
+            props.showLines && !isNew ? _lineCoordinateList.push({ lat, lng }) : null;
+
+            let indexObj = -1;
+
+            const markerObj = {
+                guid: mxObject.id,
+                isNew,
+                mxObject,
+                name,
+                color,
+                size,
+                symbol,
+                opacity,
+                iconImage,
+                visible: true,
+                draggable,
+                editable,
+                position: {
+                    lat,
+                    lng
+                },
+                formattedAddress
+            } as MarkerProps;
+
+            indexObj = -1;
+            props.locations.filter((location, index) => {
+                if (location.guid === markerObj.guid) {
+                    indexObj = index;
+                }
+            });
+            // object exists -> remove old by index and add new
+            if (indexObj > -1) {
+                props.locations.splice(indexObj, 1);
+            }
+            props.locations.push(markerObj);
+        });
+
+        // create style options for Normal / Dotted / Dashed line between markers
+        let icons: google.maps.IconSequence;
+
+        // normal lineStyle already defined in constructor
+        if (props.showLines && props.lineType !== "Normal") {
+            icons = {
+                icon: setLineStyleOptions(props.lineType, 2),
+                offset: "0",
+                repeat: "20px"
+            };
+            lineOptions = {
+                geodesic: true,
+                strokeColor: props.lineColor,
+                strokeOpacity: 0,
+                strokeWeight: props.lineThickness,
+                icons: [icons]
+            };
+        } else {
+            lineOptions = {
+                geodesic: true,
+                strokeColor: props.lineColor,
+                strokeOpacity: Number(props.lineOpacity),
+                strokeWeight: props.lineThickness
+            };
+        }
     }
+
+    return (
+        <div style={{ height: containerStyle.height, width: containerStyle.width }} className={"googlemaps-custommarker"}>
+            <APIProvider
+                // 5-5-2024 Added async part. See: https://github.com/JustFly1984/react-google-maps-api/issues/3334 
+                // 24-10-2024: Removed again since moved to new vis.gl/react-google-maps package
+                apiKey={props.apiKey /* + "&loading=async"*/}
+                libraries={libraries}
+                version={'beta'}
+            >
+                <Map
+                    mapContainerStyle={containerStyle}
+                    defaultLat={props.defaultLat}
+                    defaultLng={props.defaultLng}
+                    locations={props.locations}
+                    lowestZoom={props.lowestZoom}
+                    latAttrUpdate={props.latAttrUpdate}
+                    lngAttrUpdate={props.lngAttrUpdate}
+                    formattedAddressAttrUpdate={props.formattedAddressAttrUpdate}
+                    enableMarkerClusterer={props.enableMarkerClusterer}
+                    MCGridSize={props.MCGridSize}
+                    MCMaxZoom={props.MCMaxZoom}
+                    MCInfoWindowText={props.MCInfoWindowText}
+                    int_disableInfoWindow={props.disableInfoWindow}
+                    infoWindowWidget={props.infoWindowWidget}
+                    zoomToCurrentLocation={props.zoomToCurrentLocation}
+                    overruleFitBoundsZoom={props.overruleFitBoundsZoom}
+                    defaultMapType={props.defaultMapType}
+                    opt_drag={props.opt_drag}
+                    opt_mapcontrol={props.opt_mapcontrol}
+                    opt_scroll={props.opt_scroll}
+                    opt_streetview={props.opt_streetview}
+                    opt_tilt={props.opt_tilt}
+                    opt_zoomcontrol={props.opt_zoomcontrol}
+                    styleArray={props.styleArray}
+                    legendEnabled={props.legendEnabled}
+                    legendHeaderText={props.legendHeaderText}
+                    legendIcons={props.markerImages}
+                    legendByIcons={legendByIcons}
+                    legendEntries={props.legendEntries}
+                    searchBoxEnabled={props.searchBoxEnabled}
+                    searchBoxPlaceholder={props.searchBoxPlaceholder}
+                    searchBoxWidth={props.searchBoxWidth}
+                    searchBoxHeight={props.searchBoxHeight}
+                    showLines={props.showLines}
+                    hideMarkers={props.hideMarkers}
+                    lineOptions={lineOptions}
+                    lineColor={props.lineColor}
+                    lineThickness={props.lineThickness}
+                    lineOpacity={props.lineOpacity}
+                    _lineCoordinateList={_lineCoordinateList}
+                ></Map>
+            </APIProvider>    
+        </div>
+    );
 }
+
+// Wrap the component with React.memo and pass the custom comparison function
+export default React.memo(GoogleMapsContainer, areEqual);

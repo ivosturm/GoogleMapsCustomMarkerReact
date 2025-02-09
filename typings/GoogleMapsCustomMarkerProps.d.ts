@@ -55,6 +55,7 @@ export interface GoogleMapsCustomMarkerContainerProps {
     overruleFitBoundsZoom: boolean;
     lowestZoom: number;
     markerObjects?: ListValue;
+    displayNameAttr?: ListAttributeValue<string>;
     latAttr?: ListAttributeValue<Big | string>;
     latAttrUpdate?: EditableValue<Big | string>;
     lngAttr?: ListAttributeValue<Big>;
@@ -73,6 +74,7 @@ export interface GoogleMapsCustomMarkerContainerProps {
     enableMarkerClusterer: boolean;
     MCGridSize: number;
     MCMaxZoom: number;
+    MCInfoWindowText: string;
     legendEnabled: boolean;
     legendHeaderText: string;
     legendEntries: LegendEntriesType[];
@@ -115,6 +117,7 @@ export interface GoogleMapsCustomMarkerPreviewProps {
     overruleFitBoundsZoom: boolean;
     lowestZoom: number | null;
     markerObjects: {} | { caption: string } | { type: string } | null;
+    displayNameAttr: string;
     latAttr: string;
     latAttrUpdate: string;
     lngAttr: string;
@@ -133,6 +136,7 @@ export interface GoogleMapsCustomMarkerPreviewProps {
     enableMarkerClusterer: boolean;
     MCGridSize: number | null;
     MCMaxZoom: number | null;
+    MCInfoWindowText: string;
     legendEnabled: boolean;
     legendHeaderText: string;
     legendEntries: LegendEntriesPreviewType[];

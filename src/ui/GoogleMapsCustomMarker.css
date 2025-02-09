@@ -116,3 +116,11 @@ div.googlemaps-custommarker div.gm-layer-modal ul {
 	color: darkgrey;
 	margin: 0px 5px;
 }
+
+div.googlemaps-custommarker #pac-input {
+	font-size: 18px;
+    height: 40px;
+    padding: 0 12px;
+    width: 100%;
+	margin-top: 10px;
+}
