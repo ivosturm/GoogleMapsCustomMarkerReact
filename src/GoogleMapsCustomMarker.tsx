@@ -1,5 +1,5 @@
 
-import  { Component, ReactNode, createElement } from "react";
+import React, { Component, ReactNode } from "react";
 import { GoogleMapsCustomMarkerContainerProps } from "../typings/GoogleMapsCustomMarkerProps";
 
 import "./ui/GoogleMapsCustomMarker.css";

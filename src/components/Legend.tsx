@@ -3,7 +3,7 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable linebreak-style */
-import React, { createElement } from "react";
+import React from "react";
 import { LegendEntriesType, MarkerImagesType } from "../../typings/GoogleMapsCustomMarkerProps";
 import { pinSymbolPath } from "./MarkerUtils";
 

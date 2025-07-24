@@ -1,4 +1,4 @@
-import {createElement, useCallback} from 'react';
+import React, { useCallback} from 'react';
 import {
   AdvancedMarker,
   AdvancedMarkerAnchorPoint,
@@ -67,7 +67,7 @@ export const FeaturesClusterMarker = ({
           alignItems: 'center',
           justifyContent: 'center'
         }}>
-          <span style={{ color: textColor, fontSize: '2em'  }}>{sizeAsText}</span>
+            <span style={{ color: textColor, fontSize: '2em' }}>{sizeAsText}</span>
         </div>
 
     </AdvancedMarker>

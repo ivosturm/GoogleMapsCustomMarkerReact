@@ -3,7 +3,7 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable linebreak-style */
-import React, { createElement } from "react";
+import React from "react";
 import { AdvancedMarker } from '@vis.gl/react-google-maps';
 import { ObjectItem, EditableValue, DynamicValue, WebImage } from "mendix";
 import { onDragEnd, pinSymbolPath } from "./MarkerUtils";
@@ -90,7 +90,7 @@ const MarkerComponent: React.FC<MarkerProps> = (props) => {
             >
 
                 <div
-                    title={props.name + " (" + props.size + ")" + ", scale: " + scale + ", dim: " + dim + ", color: " + props.color}
+                    title={props.name }
                 >
                     {!enumBasedSymbol ? (
                     <svg

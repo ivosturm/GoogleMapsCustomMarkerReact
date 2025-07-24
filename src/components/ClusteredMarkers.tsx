@@ -1,4 +1,4 @@
-import  { createElement, useCallback, useEffect, Fragment } from 'react';
+import React, { useCallback, useEffect  } from 'react';
 import Supercluster, {ClusterProperties} from 'supercluster';
 import {FeaturesClusterMarker} from './FeaturesClusterMarker';
 import {useSupercluster} from './SuperCluster';

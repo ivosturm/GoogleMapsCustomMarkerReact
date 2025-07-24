@@ -1,6 +1,6 @@
 import { ControlPosition, Map as GoogleMap, InfoWindow, useApiIsLoaded, useMap  } from '@vis.gl/react-google-maps';
 import { useDrawingManager } from './DrawingManager';
-import React, { createElement, useCallback, useEffect, useState, Fragment, useRef } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import { ObjectItem, ListWidgetValue, EditableValue, ListActionValue } from "mendix";
 
 import InfoWindowComponent from "./InfoWindow";
@@ -227,9 +227,9 @@ const Map: React.FC<GoogleMapsPropsExtended> = (props) => {
             
         const mxObject = location.mxObject;
         // trigger infowindow functionality if enabled in interaction settings
-        console.debug(logNode + "clickHandler triggered!"); 
-        if (!props.int_disableInfoWindow && event && location.position) {
 
+        if (!props.int_disableInfoWindow && event && location.position) {
+            console.debug(logNode + "clickHandler will start showing infowindow!");
             setState(prevState => ({
                             ...prevState,
                             showingInfoWindow: true,
@@ -243,7 +243,10 @@ const Map: React.FC<GoogleMapsPropsExtended> = (props) => {
         }
         // else trigger action call directly
         else if (mxObject && props.int_onClick) {
+            console.debug(logNode + "clickHandler will trigger action call directly without infowindow!");
             props.int_onClick.get(mxObject).execute();
+        } else if (props.int_onClick) {
+            console.debug(logNode + "clickHandler will not do anything, no mxObject found!");
         }
     }
     // close legend pane when clicking (not dragging) on map if opened

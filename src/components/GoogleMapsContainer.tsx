@@ -3,7 +3,6 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable linebreak-style */
-import { createElement } from "react";
 import {
     DynamicValue,
     WebImage,
@@ -153,7 +152,7 @@ export const GoogleMapsContainer: React.FC<GoogleMapsContainerProps> = (props) =
     lat = Number(props.defaultLat),
     lng = Number(props.defaultLng),
     opacity = 1,
-    name = "Location",
+    name = "",
     icon: string,
     iconImage: DynamicValue<WebImage>,
     color: string,
@@ -306,6 +305,7 @@ export const GoogleMapsContainer: React.FC<GoogleMapsContainerProps> = (props) =
                     MCMaxZoom={props.MCMaxZoom}
                     MCInfoWindowText={props.MCInfoWindowText}
                     int_disableInfoWindow={props.disableInfoWindow}
+                    int_onClick={props.int_onClick}
                     infoWindowWidget={props.infoWindowWidget}
                     zoomToCurrentLocation={props.zoomToCurrentLocation}
                     overruleFitBoundsZoom={props.overruleFitBoundsZoom}

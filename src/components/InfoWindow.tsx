@@ -1,4 +1,4 @@
-import React, { Component, createElement } from "react";
+import React, { Component } from "react";
 import { InfoWindow } from "@vis.gl/react-google-maps"
 import { ObjectItem, ListWidgetValue} from "mendix";
 import { PositionProps } from "./MarkerUtils";
