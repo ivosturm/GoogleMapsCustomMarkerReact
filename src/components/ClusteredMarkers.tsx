@@ -79,7 +79,7 @@ export const ClusteredMarkers = ({
               draggable={false}
               visible={true}
               onClick={(e: google.maps.MapMouseEvent) => (feature.properties as GeoJsonProperties)?.['onClick']?.(e)}
-              name={'Single Marker'}
+              name={(feature.properties as GeoJsonProperties)?.['name']}
           />
         );
       })}
