@@ -1,11 +1,10 @@
 import { ControlPosition, Map as GoogleMap, InfoWindow, useApiIsLoaded, useMap  } from '@vis.gl/react-google-maps';
-import { useDrawingManager } from './DrawingManager';
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import React, { Fragment, createElement, useCallback, useEffect, useState, useRef } from "react";
 import { ObjectItem, ListWidgetValue, EditableValue, ListActionValue } from "mendix";
 
 import InfoWindowComponent from "./InfoWindow";
 import { InfoWindowContent } from "./InfoWindowContent";
-import { geocodePosition, PositionProps, updateAttribute } from   "./MarkerUtils";                                                        
+import { PositionProps } from   "./MarkerUtils";                                                        
 import { DefaultMapTypeEnum, LegendEntriesType, MarkerImagesType } from "../../typings/GoogleMapsCustomMarkerProps";
 import MarkerComponent, { MarkerProps } from "./Marker";
 import Legend from "./Legend";
@@ -182,26 +181,7 @@ const Map: React.FC<GoogleMapsPropsExtended> = (props) => {
         }
     }, [isLoaded, map, props.locations]);
 
-    const onMarkerComplete = (marker: google.maps.Marker) => {
-        const latLng = marker.getPosition();
-        const lat = latLng?.lat();
-        const lng = latLng?.lng();
-        if (lat && lng && props.latAttrUpdate && props.lngAttrUpdate) {
-            console.debug(logNode + "completed drawing! Coordinates retrieved: " + lat + ", " + lng);
-            updateAttribute(lat, "lat", props.latAttrUpdate);
-            updateAttribute(lng, "lng", props.lngAttrUpdate);
 
-            // store the formatted address of the location if attribute selected in modeler
-            if (props.formattedAddressAttrUpdate && latLng) {
-                // reverse geocode and do not commit
-                try {
-                    geocodePosition(latLng, props.formattedAddressAttrUpdate);
-                } catch (e) {
-                    console.error(logNode + e);
-                }               
-            }
-        }
-    }
     function clickHandler(event: any, location: MarkerProps) {
         const name = location.name
         const position = location.position; 
@@ -378,14 +358,6 @@ const Map: React.FC<GoogleMapsPropsExtended> = (props) => {
                     }))
                 : []
         };
-        //if (map && isLoaded){
-            // if map already loaded before, calculate zoom and fitBounds again!
-            useDrawingManager(
-                null,
-                props.locations,
-                onMarkerComplete
-            );
-        //}
         return (
             <>
                 {isLoaded ? (

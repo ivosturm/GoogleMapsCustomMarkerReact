@@ -1,4 +1,4 @@
-import React from "react";
+import { createElement } from "react";
 import {ControlPosition, MapControl} from '@vis.gl/react-google-maps';
 
 import {SearchBox, SearchBoxProps} from './SearchBox';

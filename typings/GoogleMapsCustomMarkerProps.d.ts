@@ -44,9 +44,10 @@ export interface GoogleMapsCustomMarkerContainerProps {
     class: string;
     style?: CSSProperties;
     tabIndex?: number;
+    apiKeyObjectDS: ListValue;
+    apiKeyAttribute: ListAttributeValue<string>;
     mapHeight: number;
     mapWidth: number;
-    apiAccessKey: string;
     defaultLat: string;
     defaultLng: string;
     defaultMapType: DefaultMapTypeEnum;
@@ -93,6 +94,7 @@ export interface GoogleMapsCustomMarkerContainerProps {
     opt_scroll: boolean;
     opt_streetview: boolean;
     opt_zoomcontrol: boolean;
+    opt_fullscreencontrol: boolean;
     opt_tilt: Opt_tiltEnum;
     styleArray: string;
 }
@@ -106,9 +108,10 @@ export interface GoogleMapsCustomMarkerPreviewProps {
     style: string;
     styleObject?: CSSProperties;
     readOnly: boolean;
+    apiKeyObjectDS: {} | { caption: string } | { type: string } | null;
+    apiKeyAttribute: string;
     mapHeight: number | null;
     mapWidth: number | null;
-    apiAccessKey: string;
     defaultLat: string;
     defaultLng: string;
     defaultMapType: DefaultMapTypeEnum;
@@ -155,6 +158,7 @@ export interface GoogleMapsCustomMarkerPreviewProps {
     opt_scroll: boolean;
     opt_streetview: boolean;
     opt_zoomcontrol: boolean;
+    opt_fullscreencontrol: boolean;
     opt_tilt: Opt_tiltEnum;
     styleArray: string;
 }

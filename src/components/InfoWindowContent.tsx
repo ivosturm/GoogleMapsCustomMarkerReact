@@ -1,4 +1,4 @@
-import React, { memo} from 'react';
+import { createElement, memo} from 'react';
 import {Feature, Point} from 'geojson';
 import { InfoWindow } from '@vis.gl/react-google-maps';
 

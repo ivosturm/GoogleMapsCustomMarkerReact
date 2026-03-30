@@ -9,6 +9,21 @@
     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
 	</icon>
   <properties>
+  		<propertyGroup caption="API Key">
+			<propertyGroup caption="API Key Object">
+				<property key="apiKeyObjectDS" type="datasource" isList="true" required="true">
+					<caption>Data Source</caption>
+					<description>For using in Production, a Google Maps API key will be needed. For development purposes it can be left empty, but will generate text overlays 'For development purposes only' by Google</description>
+				</property> 
+				<property key="apiKeyAttribute" type="attribute" dataSource="apiKeyObjectDS" required="true">
+					<caption>Attribute</caption>
+					<description>Select the attribute that contains the API key.</description>
+					<attributeTypes>
+						<attributeType name="String"/>
+					</attributeTypes>
+				</property> 
+			</propertyGroup>
+		</propertyGroup>				
 		<propertyGroup caption="Behavior">
 			<propertyGroup caption="Map">
 				<property key="mapHeight" type="integer" defaultValue="600">
@@ -18,11 +33,7 @@
                 <property key="mapWidth" type="integer" defaultValue="900">
                     <caption>Width</caption>
                     <description>The map's width in pixels. Setting it to 10.000 will set it to 100 % of the width of the screen and will resize it dynamically when zooming.</description> 
-                </property>
-				<property key="apiAccessKey" type="string" required="false">
-					<caption>Maps API Access Key</caption>
-					<description>For using in Production, a Google Maps API key will be needed. For development purposes it can be left empty, but will generate text overlays 'For development purposes only' by Google</description>
-				</property> 			
+                </property>							
 				<property key="defaultLat" type="string" defaultValue="0.0">
 					<caption>Default Latitude</caption>
 					<description>Default latitude for the map to start at.</description> 

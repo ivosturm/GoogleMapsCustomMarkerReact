@@ -3,7 +3,7 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable linebreak-style */
-import React from "react";
+import React, { createElement} from "react";
 import { AdvancedMarker } from '@vis.gl/react-google-maps';
 import { ObjectItem, EditableValue, DynamicValue, WebImage } from "mendix";
 import { onDragEnd, pinSymbolPath } from "./MarkerUtils";

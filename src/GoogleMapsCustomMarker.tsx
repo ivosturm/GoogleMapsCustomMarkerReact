@@ -1,5 +1,6 @@
 
-import React, { Component, ReactNode } from "react";
+import { createElement, Component, ReactNode } from "react";
+import { ValueStatus } from "mendix";
 import { GoogleMapsCustomMarkerContainerProps } from "../typings/GoogleMapsCustomMarkerProps";
 
 import "./ui/GoogleMapsCustomMarker.css";
@@ -7,7 +8,21 @@ import GoogleMapsContainer from "./components/GoogleMapsContainer";
 
 export default class GoogleMapsCustomMarker extends Component<GoogleMapsCustomMarkerContainerProps> {
     render(): ReactNode {
+
+        const apiKeyObjectDS = this.props.apiKeyObjectDS;
+
+        if (!apiKeyObjectDS || apiKeyObjectDS.status !== ValueStatus.Available) {
+            return <div>Loading...</div>;
+        } else if (apiKeyObjectDS.status === ValueStatus.Available && (!apiKeyObjectDS.items || apiKeyObjectDS.items.length === 0)) {
+            return <div>Please provide an API key</div>;
+        } 
+
+        const apiKeyObject = apiKeyObjectDS.items![0];
+        const apiKey = String(this.props.apiKeyAttribute.get(apiKeyObject).value);
+        
         return (
+            <div>
+            {!apiKey ? <div>Please provide a valid API key to make the widget work in Production</div> : null}
             <GoogleMapsContainer
                 mapHeight={this.props.mapHeight}
                 mapWidth={this.props.mapWidth}
@@ -40,7 +55,7 @@ export default class GoogleMapsCustomMarker extends Component<GoogleMapsCustomMa
                 opt_zoomcontrol={this.props.opt_zoomcontrol}
                 opt_tilt={this.props.opt_tilt}
                 opt_fullscreencontrol={this.props.opt_fullscreencontrol}
-                apiKey={this.props.apiAccessKey}
+                apiKey={apiKey}
                 defaultLat={this.props.defaultLat}
                 defaultLng={this.props.defaultLng}
                 zoomToCurrentLocation={this.props.zoomToCurrentLocation}
@@ -63,6 +78,7 @@ export default class GoogleMapsCustomMarker extends Component<GoogleMapsCustomMa
                 lineOpacity={this.props.lineOpacity}
                 markerImages={this.props.markerImages}
             />
+            </div>
         );
     }
 }

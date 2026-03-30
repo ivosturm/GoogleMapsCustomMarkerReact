@@ -17,6 +17,10 @@ import {
 
 import { APIProvider } from '@vis.gl/react-google-maps';
 
+import TerraDrawLayer from './TerraDrawLayer';
+
+import DrawingControls from "./DrawingControls";
+
 import { isAttributeEditable, PositionProps, setLineStyleOptions } from "./MarkerUtils";
 import Map from "./Map";
 
@@ -27,8 +31,15 @@ import {
     MarkerImagesType
 } from "../../typings/GoogleMapsCustomMarkerProps";
 import { MarkerProps } from "./Marker";
-import React from "react";
+import React, { Fragment, createElement } from "react";
 import _ from "lodash";
+
+import {Position} from 'geojson';
+
+import { geocodePosition, updateAttribute } from   "./MarkerUtils";     
+import { TerraDraw } from "terra-draw";
+
+//const logNode = "Google Maps Custom Marker widget: GoogleMapsContainer component ";
 
 export const markerColorDefault = "#E11D24";
 const markerSymbolDefault = "MARKER";
@@ -36,7 +47,7 @@ const markerSizeDefault = "M";
 
 type DataSource = "static" | "context" | "XPath" | "microflow";
 
-const libraries = ["drawing", "marker"];
+const libraries = ["marker"];
 const containerStyle = {
     width: "800px",
     height: "600px"
@@ -108,9 +119,46 @@ interface GoogleMapsContainerProps extends GoogleMapsWidgetProps {
     locations: MarkerProps[];
 }
 
+const logNode: string = "Google Maps Custom Marker widget: ";
+
+const isPosition = (pos: Position | Position[] | Position[][]): pos is Position => {
+    return Array.isArray(pos) && pos.length >= 2 && typeof pos[0] === 'number';
+};
+
+const onMarkerComplete = (position: Position | Position[] | Position[][], draw: TerraDraw, latAttrUpdate: EditableValue<Big.Big | string> | undefined, lngAttrUpdate: EditableValue<Big.Big | string> | undefined, formattedAddressAttrUpdate?: EditableValue<string>) => {
+    console.debug(logNode + "onMarkerComplete: Position data received:", position);
+    if (isPosition(position)) {
+        console.debug(logNode + "onMarkerComplete: Position is a single point. Processing coordinates.");
+        const lng = position[0];
+        const lat = position[1];   
+        if (lat && lng && latAttrUpdate && lngAttrUpdate) {
+            console.debug(logNode + "onMarkerComplete: Editing enabled! Coordinates retrieved: " + lat + ", " + lng);
+            updateAttribute(lat, "lat", latAttrUpdate);
+            updateAttribute(lng, "lng", lngAttrUpdate);
+
+            // store the formatted address of the location if attribute selected in modeler
+            if (formattedAddressAttrUpdate) {
+                // reverse geocode and do not commit
+                try {
+                    const latLng = new google.maps.LatLng(lat, lng);
+                    geocodePosition(latLng, formattedAddressAttrUpdate);
+                } catch (e) {
+                    console.error(logNode + e);
+                }               
+            }
+            draw.stop();
+        } else {
+            console.warn(logNode + "Latitude or longitude attribute updates are not configured. Unable to update coordinates.");
+        }
+    } else {
+        console.warn(logNode + "Received position data is not in expected format. Unable to process coordinates.");
+    }
+}
+
 export const GoogleMapsContainer = (props: GoogleMapsContainerProps) => {
+
     let mxObjects: ObjectItem[] = [];
-    const logNode: string = "Google Maps Custom Marker (React) widget: ";
+
     let _lineCoordinateList: PositionProps[] = [];
     let legendByIcons = false;
     let lineOptions: google.maps.PolylineOptions = {};
@@ -265,7 +313,7 @@ export const GoogleMapsContainer = (props: GoogleMapsContainerProps) => {
             };
         }
     }
-
+const singleItemEditableMode = ((props.locations && props.locations.length === 1 && props.locations[0].isNew));
     return (
         <div style={{ height: containerStyle.height, width: containerStyle.width }} className={"googlemaps-custommarker"}>
             <APIProvider
@@ -275,50 +323,62 @@ export const GoogleMapsContainer = (props: GoogleMapsContainerProps) => {
                 libraries={libraries}
                 version={'beta'}
             >
-                <Map
-                    mapContainerStyle={containerStyle}
-                    defaultLat={props.defaultLat}
-                    defaultLng={props.defaultLng}
-                    locations={props.locations}
-                    lowestZoom={props.lowestZoom}
-                    latAttrUpdate={props.latAttrUpdate}
-                    lngAttrUpdate={props.lngAttrUpdate}
-                    formattedAddressAttrUpdate={props.formattedAddressAttrUpdate}
-                    enableMarkerClusterer={props.enableMarkerClusterer}
-                    MCGridSize={props.MCGridSize}
-                    MCMaxZoom={props.MCMaxZoom}
-                    MCInfoWindowText={props.MCInfoWindowText}
-                    int_disableInfoWindow={props.disableInfoWindow}
-                    int_onClick={props.int_onClick}
-                    infoWindowWidget={props.infoWindowWidget}
-                    zoomToCurrentLocation={props.zoomToCurrentLocation}
-                    overruleFitBoundsZoom={props.overruleFitBoundsZoom}
-                    defaultMapType={props.defaultMapType}
-                    opt_drag={props.opt_drag}
-                    opt_mapcontrol={props.opt_mapcontrol}
-                    opt_scroll={props.opt_scroll}
-                    opt_streetview={props.opt_streetview}
-                    opt_tilt={props.opt_tilt}
-                    opt_zoomcontrol={props.opt_zoomcontrol}
-                    opt_fullscreencontrol={props.opt_fullscreencontrol}
-                    styleArray={props.styleArray}
-                    legendEnabled={props.legendEnabled}
-                    legendHeaderText={props.legendHeaderText}
-                    legendIcons={props.markerImages}
-                    legendByIcons={legendByIcons}
-                    legendEntries={props.legendEntries}
-                    searchBoxEnabled={props.searchBoxEnabled}
-                    searchBoxPlaceholder={props.searchBoxPlaceholder}
-                    searchBoxWidth={props.searchBoxWidth}
-                    searchBoxHeight={props.searchBoxHeight}
-                    showLines={props.showLines}
-                    hideMarkers={props.hideMarkers}
-                    lineOptions={lineOptions}
-                    lineColor={props.lineColor}
-                    lineThickness={props.lineThickness}
-                    lineOpacity={props.lineOpacity}
-                    _lineCoordinateList={_lineCoordinateList}
-                ></Map>
+                {/* TerraDrawLayer initializes the draw instance once the map is ready. */}
+                <TerraDrawLayer onMarkerComplete={(position, draw) => onMarkerComplete(position, draw, props.latAttrUpdate, props.lngAttrUpdate, props.formattedAddressAttrUpdate)}>
+                {draw => (
+                    <>
+                    <Map
+                        mapContainerStyle={containerStyle}
+                        defaultLat={props.defaultLat}
+                        defaultLng={props.defaultLng}
+                        locations={props.locations}
+                        lowestZoom={props.lowestZoom}
+                        latAttrUpdate={props.latAttrUpdate}
+                        lngAttrUpdate={props.lngAttrUpdate}
+                        formattedAddressAttrUpdate={props.formattedAddressAttrUpdate}
+                        enableMarkerClusterer={props.enableMarkerClusterer}
+                        MCGridSize={props.MCGridSize}
+                        MCMaxZoom={props.MCMaxZoom}
+                        MCInfoWindowText={props.MCInfoWindowText}
+                        int_disableInfoWindow={props.disableInfoWindow}
+                        int_onClick={props.int_onClick}
+                        infoWindowWidget={props.infoWindowWidget}
+                        zoomToCurrentLocation={props.zoomToCurrentLocation}
+                        overruleFitBoundsZoom={props.overruleFitBoundsZoom}
+                        defaultMapType={props.defaultMapType}
+                        opt_drag={props.opt_drag}
+                        opt_mapcontrol={props.opt_mapcontrol}
+                        opt_scroll={props.opt_scroll}
+                        opt_streetview={props.opt_streetview}
+                        opt_tilt={props.opt_tilt}
+                        opt_zoomcontrol={props.opt_zoomcontrol}
+                        opt_fullscreencontrol={props.opt_fullscreencontrol}
+                        styleArray={props.styleArray}
+                        legendEnabled={props.legendEnabled}
+                        legendHeaderText={props.legendHeaderText}
+                        legendIcons={props.markerImages}
+                        legendByIcons={legendByIcons}
+                        legendEntries={props.legendEntries}
+                        searchBoxEnabled={props.searchBoxEnabled}
+                        searchBoxPlaceholder={props.searchBoxPlaceholder}
+                        searchBoxWidth={props.searchBoxWidth}
+                        searchBoxHeight={props.searchBoxHeight}
+                        showLines={props.showLines}
+                        hideMarkers={props.hideMarkers}
+                        lineOptions={lineOptions}
+                        lineColor={props.lineColor}
+                        lineThickness={props.lineThickness}
+                        lineOpacity={props.lineOpacity}
+                        _lineCoordinateList={_lineCoordinateList}
+                    />
+                    {/* Always render DrawingControls but pass editable flag */}
+                    <DrawingControls 
+                        draw={draw} 
+                        editable={!props.latAttrUpdate?.readOnly && singleItemEditableMode} 
+                    />
+                            </>
+                    )}
+                </TerraDrawLayer>
             </APIProvider>    
         </div>
     );
