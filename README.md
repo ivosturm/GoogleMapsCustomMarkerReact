@@ -23,6 +23,7 @@ This widget uses React / TypeScript and the new pluggable widgets API. Additiona
 * Add the Google Maps Custom Marker widget to your page, see screenshots for Settings in Studio Pro.
 
 * At least configure:
+	* API Key: Feed the widget with a datasource that fetches the API Key. Easiest config is creating a non persistent entity 'Authorization' with 1 attribute 'API Key'. Create that in the data source MF, set the attribute with the constant value of the API key, add the newly created API Key object to a list (because widget always needs a list as datasource sadly..).		
 	* Data source: the Mendix objects containing the Location data
 	* For Position: Latitude / Longitude attributes: required format: Decimal
 	* For Editing of Position: Lat Attribute (for updates) / Lng Attribute (for updates)
