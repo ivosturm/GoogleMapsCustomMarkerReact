@@ -33,7 +33,11 @@
                 <property key="mapWidth" type="integer" defaultValue="900">
                     <caption>Width</caption>
                     <description>The map's width in pixels. Setting it to 10.000 will set it to 100 % of the width of the screen and will resize it dynamically when zooming.</description> 
-                </property>							
+                </property>
+				<property key="mapId" type="string" required="false" defaultValue="">
+					<caption>Map ID</caption>
+					<description>Optional unique identifier for the Google Map instance. Used for advanced map configuration with Google Cloud Console. Leave empty to auto-generate.</description>
+				</property>							
 				<property key="defaultLat" type="string" defaultValue="0.0">
 					<caption>Default Latitude</caption>
 					<description>Default latitude for the map to start at.</description> 
@@ -206,6 +210,18 @@
 				<caption>When infowindow itself is disabled, this on click action, if configured, will be called directly</caption>
 				<description/>
 			</property>
+			<property key="opt_selectedmarkerstyle" type="boolean" defaultValue="false">
+				<caption>Enable Selected Marker Styling</caption>
+				<description>When enabled, the selected marker is visually emphasized.</description>
+			</property>
+			<property key="selectedMarkerScalePercent" type="integer" defaultValue="120">
+				<caption>Selected Marker Scale (%)</caption>
+				<description>Scale multiplier for the selected marker in percent. Example: 120 means 1.2x.</description>
+			</property>
+			<property key="selectedMarkerZIndexBoost" type="integer" defaultValue="1000">
+				<caption>Selected Marker Z-Index Boost</caption>
+				<description>Additional z-index applied to the selected marker so it renders above others.</description>
+			</property>
 		</propertyGroup>
 		<propertyGroup caption="Clustering">
 			<property key="enableMarkerClusterer" type="boolean" defaultValue="true">
@@ -219,11 +235,35 @@
 			<property key="MCMaxZoom" type="integer" defaultValue="18">
 				<caption>Maximum Zoom</caption>
 				<description>Determines the maximum zoomed-in level at which clustering is done.</description> 
-			</property>  
+			</property>
 			<property key="MCInfoWindowText" type="string" defaultValue="features. Zoom in to explore.">
 				<caption>Infowindow Text</caption>
 				<description>Determines the text after the amount of features in the markercluster.</description> 
-			</property>  
+			</property>
+			<property key="MCMediumThreshold" type="integer" defaultValue="50">
+				<caption>Medium Cluster Threshold</caption>
+				<description>Cluster sizes from this value up to the large threshold use the medium cluster color.</description>
+			</property>
+			<property key="MCLargeThreshold" type="integer" defaultValue="200">
+				<caption>Large Cluster Threshold</caption>
+				<description>Cluster sizes from this value and above use the large cluster color.</description>
+			</property>
+			<property key="MCColorSmall" type="string" defaultValue="#2f7d32">
+				<caption>Small Cluster Color</caption>
+				<description>Fill color for small clusters (below medium threshold).</description>
+			</property>
+			<property key="MCColorMedium" type="string" defaultValue="#f9a825">
+				<caption>Medium Cluster Color</caption>
+				<description>Fill color for medium clusters.</description>
+			</property>
+			<property key="MCColorLarge" type="string" defaultValue="#c62828">
+				<caption>Large Cluster Color</caption>
+				<description>Fill color for large clusters.</description>
+			</property>
+			<property key="enableClusterSpiderfier" type="boolean" defaultValue="true">
+				<caption>Enable Cluster Spiderfier</caption>
+				<description>When enabled, clusters with less than 10 markers will spread out in a circle/spiral on click, showing individual markers. Larger clusters will zoom in. When disabled, all clusters zoom in on click.</description>
+			</property>
 		</propertyGroup>
 		<propertyGroup caption="Legend">
 			<property key="legendEnabled" type="boolean" defaultValue="false">
@@ -292,11 +332,12 @@
 			</property>
 			<property key="lineType" type="enumeration"  required="true" defaultValue="Normal">
 				<caption>Line Type</caption>
-				<description>The type of line. Supported are: Normal, Dashed and Dotted.</description> 
+				<description>The type of line. Supported are: Normal, Dashed, Dotted and Arrow.</description> 
 				<enumerationValues>
 					<enumerationValue key="Normal">Normal</enumerationValue>
 					<enumerationValue key="Dotted">Dotted</enumerationValue>
 					<enumerationValue key="Dashed">Dashed</enumerationValue>
+					<enumerationValue key="Arrow">Arrow</enumerationValue>
 				</enumerationValues>
         	</property>
 			<property key="hideMarkers" type="boolean" defaultValue="false">
@@ -314,6 +355,14 @@
 			<property key="lineOpacity" type="string" defaultValue="1.0">
 				<caption>Line Opacity</caption>
 				<description>The lines' opacity between 0.0 and 1.0. The value 0.0 means completely opaque / not visible. Defaults to 1.0.</description> 
+			</property>
+			<property key="arrowRepeatSpacing" type="integer" defaultValue="50">
+				<caption>Arrow Repeat Spacing</caption>
+				<description>The spacing in pixels between arrow symbols on lines. Only applies when Line Type is set to 'Arrow'.</description>
+			</property>
+			<property key="arrowSize" type="integer" defaultValue="15">
+				<caption>Arrow Size</caption>
+				<description>The size in pixels of arrow symbols on lines. Only applies when Line Type is set to 'Arrow'.</description>
 			</property>
 		</propertyGroup>
         <!-- Map CONTROLS -->
@@ -342,6 +391,14 @@
 				<property key="opt_fullscreencontrol" type="boolean" defaultValue="true">
 					<caption>Fullscreen Control</caption>
 					<description>Enable/disable Fullscreen control</description>
+				</property>
+				<property key="opt_recenterbutton" type="boolean" defaultValue="true">
+					<caption>Recenter Button</caption>
+					<description>Show or hide the recenter button control on the map.</description>
+				</property>
+				<property key="opt_undobutton" type="boolean" defaultValue="true">
+					<caption>Undo/Redo Buttons</caption>
+					<description>Show or hide the undo/redo controls for marker editing.</description>
 				</property>
 				<property key="opt_tilt" type="enumeration" defaultValue="d0">
 					<caption>Tilt</caption>

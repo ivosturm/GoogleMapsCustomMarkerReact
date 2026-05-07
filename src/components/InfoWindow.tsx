@@ -7,6 +7,7 @@ export interface InfoWindowProps extends InfoWindowExposedProps{
     anchor?: google.maps.MVCObject;
     position? : PositionProps;  
     pixelOffset?: [number, number];
+    zIndex?: number;
     onCloseClick?: any;
 }
 
@@ -32,10 +33,18 @@ export default class InfoWindowComponent extends Component<InfoWindowProps> {
         if (this.props.infoWindowWidget && this.props.mxObject) {
             innerWidget = this.props.infoWindowWidget.get(this.props.mxObject);
         }
+        const infoWindowKey = [
+            this.props.position?.lat ?? "",
+            this.props.position?.lng ?? "",
+            this.props.pixelOffset?.[0] ?? "",
+            this.props.pixelOffset?.[1] ?? ""
+        ].join(":");
         return (  <InfoWindow
+        key={infoWindowKey}
         position={this.props.position}
         onCloseClick={this.props.onCloseClick}
         pixelOffset={this.props.pixelOffset}
+        zIndex={this.props.zIndex}
     >
         <div>
             {innerWidget}

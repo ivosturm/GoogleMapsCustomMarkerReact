@@ -31,7 +31,7 @@ import {
     MarkerImagesType
 } from "../../typings/GoogleMapsCustomMarkerProps";
 import { MarkerProps } from "./Marker";
-import React, { Fragment, createElement } from "react";
+import { Fragment, createElement } from "react";
 import _ from "lodash";
 
 import {Position} from 'geojson';
@@ -77,12 +77,21 @@ export interface GoogleMapsWidgetProps {
     defaultLng: string;
     dataSource: DataSource;
     enableMarkerClusterer: boolean;
+    enableClusterSpiderfier: boolean;
     MCGridSize: number;
     MCMaxZoom: number;
-    MCInfoWindowText: string
+    MCInfoWindowText: string;
+    MCMediumThreshold: number;
+    MCLargeThreshold: number;
+    MCColorSmall: string;
+    MCColorMedium: string;
+    MCColorLarge: string;
     disableInfoWindow: boolean;
     int_onClick?: ListActionValue;
     infoWindowWidget?: ListWidgetValue;
+    opt_selectedmarkerstyle: boolean;
+    selectedMarkerScalePercent: number;
+    selectedMarkerZIndexBoost: number;
     zoomToCurrentLocation: boolean;
     overruleFitBoundsZoom: boolean;
     lowestZoom: number;
@@ -92,6 +101,8 @@ export interface GoogleMapsWidgetProps {
     opt_streetview: boolean;
     opt_zoomcontrol: boolean;
     opt_fullscreencontrol: boolean;
+    opt_recenterbutton: boolean;
+    opt_undobutton: boolean;
     opt_tilt: string;
     styleArray: string;
     legendEnabled: boolean;
@@ -233,11 +244,11 @@ export const GoogleMapsContainer = (props: GoogleMapsContainerProps) => {
                     }
                 });
             }
-            !props.enumAttr && props.markerSymbolAttr
-                ? (symbol = String(props.markerSymbolAttr.get(mxObject).value))
+            symbol = props.markerSymbolAttr
+                ? String(props.markerSymbolAttr.get(mxObject).value)
                 : markerSymbolDefault;
-            props.markerSizeAttr
-                ? (size = String(props.markerSizeAttr.get(mxObject).value))
+            size = props.markerSizeAttr
+                ? String(props.markerSizeAttr.get(mxObject).value)
                 : markerSizeDefault;
 
             props.colorAttr ? (color = String(props.colorAttr.get(mxObject).value)) : markerColorDefault;
@@ -321,7 +332,6 @@ const singleItemEditableMode = ((props.locations && props.locations.length === 1
                 // 24-10-2024: Removed again since moved to new vis.gl/react-google-maps package
                 apiKey={props.apiKey /* + "&loading=async"*/}
                 libraries={libraries}
-                version={'beta'}
             >
                 {/* TerraDrawLayer initializes the draw instance once the map is ready. */}
                 <TerraDrawLayer onMarkerComplete={(position, draw) => onMarkerComplete(position, draw, props.latAttrUpdate, props.lngAttrUpdate, props.formattedAddressAttrUpdate)}>
@@ -337,12 +347,21 @@ const singleItemEditableMode = ((props.locations && props.locations.length === 1
                         lngAttrUpdate={props.lngAttrUpdate}
                         formattedAddressAttrUpdate={props.formattedAddressAttrUpdate}
                         enableMarkerClusterer={props.enableMarkerClusterer}
+                        enableClusterSpiderfier={props.enableClusterSpiderfier}
                         MCGridSize={props.MCGridSize}
                         MCMaxZoom={props.MCMaxZoom}
                         MCInfoWindowText={props.MCInfoWindowText}
+                        MCMediumThreshold={props.MCMediumThreshold}
+                        MCLargeThreshold={props.MCLargeThreshold}
+                        MCColorSmall={props.MCColorSmall}
+                        MCColorMedium={props.MCColorMedium}
+                        MCColorLarge={props.MCColorLarge}
                         int_disableInfoWindow={props.disableInfoWindow}
                         int_onClick={props.int_onClick}
                         infoWindowWidget={props.infoWindowWidget}
+                        opt_selectedmarkerstyle={props.opt_selectedmarkerstyle}
+                        selectedMarkerScalePercent={props.selectedMarkerScalePercent}
+                        selectedMarkerZIndexBoost={props.selectedMarkerZIndexBoost}
                         zoomToCurrentLocation={props.zoomToCurrentLocation}
                         overruleFitBoundsZoom={props.overruleFitBoundsZoom}
                         defaultMapType={props.defaultMapType}
@@ -353,6 +372,8 @@ const singleItemEditableMode = ((props.locations && props.locations.length === 1
                         opt_tilt={props.opt_tilt}
                         opt_zoomcontrol={props.opt_zoomcontrol}
                         opt_fullscreencontrol={props.opt_fullscreencontrol}
+                        opt_recenterbutton={props.opt_recenterbutton}
+                        opt_undobutton={props.opt_undobutton}
                         styleArray={props.styleArray}
                         legendEnabled={props.legendEnabled}
                         legendHeaderText={props.legendHeaderText}
@@ -384,5 +405,4 @@ const singleItemEditableMode = ((props.locations && props.locations.length === 1
     );
 }
 
-// Wrap the component with React.memo and pass the custom comparison function
-export default React.memo(GoogleMapsContainer);
+export default GoogleMapsContainer;

@@ -16,18 +16,20 @@ const DrawingControls = ({draw, editable}: DrawingControlsProps) => {
   React.useEffect(() => {
     if (!draw) return;
 
+    // Guard: TerraDraw must be enabled (started) before calling setMode
+    if (!draw.enabled) return;
+
     if (!editable) {
-      // Keep TerraDraw in static mode when not editable, no cursor changes
       draw.setMode('static');
       setActiveMode('static');
       return;
     }
 
-    if (activeMode !== 'static') return;
-
-    // Start in default mode once TerraDraw is ready and widget is editable
-    draw.setMode(DEFAULT_MODE);
-    setActiveMode(DEFAULT_MODE);
+    // Only switch to draw mode if currently static
+    if (activeMode === 'static') {
+      draw.setMode(DEFAULT_MODE);
+      setActiveMode(DEFAULT_MODE);
+    }
   }, [draw, editable]);
 
   return null;

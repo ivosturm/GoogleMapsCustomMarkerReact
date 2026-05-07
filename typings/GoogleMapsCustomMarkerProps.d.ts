@@ -23,7 +23,7 @@ export interface LegendEntriesType {
     legendOnClick?: ActionValue;
 }
 
-export type LineTypeEnum = "Normal" | "Dotted" | "Dashed";
+export type LineTypeEnum = "Normal" | "Dotted" | "Dashed" | "Arrow";
 
 export type Opt_tiltEnum = "d0" | "d45";
 
@@ -48,6 +48,7 @@ export interface GoogleMapsCustomMarkerContainerProps {
     apiKeyAttribute: ListAttributeValue<string>;
     mapHeight: number;
     mapWidth: number;
+    mapId: string;
     defaultLat: string;
     defaultLng: string;
     defaultMapType: DefaultMapTypeEnum;
@@ -72,10 +73,19 @@ export interface GoogleMapsCustomMarkerContainerProps {
     infoWindowWidget?: ListWidgetValue;
     disableInfoWindow: boolean;
     onClick?: ListActionValue;
+    opt_selectedmarkerstyle: boolean;
+    selectedMarkerScalePercent: number;
+    selectedMarkerZIndexBoost: number;
     enableMarkerClusterer: boolean;
     MCGridSize: number;
     MCMaxZoom: number;
     MCInfoWindowText: string;
+    MCMediumThreshold: number;
+    MCLargeThreshold: number;
+    MCColorSmall: string;
+    MCColorMedium: string;
+    MCColorLarge: string;
+    enableClusterSpiderfier: boolean;
     legendEnabled: boolean;
     legendHeaderText: string;
     legendEntries: LegendEntriesType[];
@@ -89,12 +99,16 @@ export interface GoogleMapsCustomMarkerContainerProps {
     lineColor: string;
     lineThickness: number;
     lineOpacity: string;
+    arrowRepeatSpacing: number;
+    arrowSize: number;
     opt_drag: boolean;
     opt_mapcontrol: boolean;
     opt_scroll: boolean;
     opt_streetview: boolean;
     opt_zoomcontrol: boolean;
     opt_fullscreencontrol: boolean;
+    opt_recenterbutton: boolean;
+    opt_undobutton: boolean;
     opt_tilt: Opt_tiltEnum;
     styleArray: string;
 }
@@ -112,6 +126,7 @@ export interface GoogleMapsCustomMarkerPreviewProps {
     apiKeyAttribute: string;
     mapHeight: number | null;
     mapWidth: number | null;
+    mapId: string;
     defaultLat: string;
     defaultLng: string;
     defaultMapType: DefaultMapTypeEnum;
@@ -136,10 +151,19 @@ export interface GoogleMapsCustomMarkerPreviewProps {
     infoWindowWidget: { widgetCount: number; renderer: ComponentType<{ children: ReactNode; caption?: string }> };
     disableInfoWindow: boolean;
     onClick: {} | null;
+    opt_selectedmarkerstyle: boolean;
+    selectedMarkerScalePercent: number | null;
+    selectedMarkerZIndexBoost: number | null;
     enableMarkerClusterer: boolean;
     MCGridSize: number | null;
     MCMaxZoom: number | null;
     MCInfoWindowText: string;
+    MCMediumThreshold: number | null;
+    MCLargeThreshold: number | null;
+    MCColorSmall: string;
+    MCColorMedium: string;
+    MCColorLarge: string;
+    enableClusterSpiderfier: boolean;
     legendEnabled: boolean;
     legendHeaderText: string;
     legendEntries: LegendEntriesPreviewType[];
@@ -153,12 +177,16 @@ export interface GoogleMapsCustomMarkerPreviewProps {
     lineColor: string;
     lineThickness: number | null;
     lineOpacity: string;
+    arrowRepeatSpacing: number | null;
+    arrowSize: number | null;
     opt_drag: boolean;
     opt_mapcontrol: boolean;
     opt_scroll: boolean;
     opt_streetview: boolean;
     opt_zoomcontrol: boolean;
     opt_fullscreencontrol: boolean;
+    opt_recenterbutton: boolean;
+    opt_undobutton: boolean;
     opt_tilt: Opt_tiltEnum;
     styleArray: string;
 }

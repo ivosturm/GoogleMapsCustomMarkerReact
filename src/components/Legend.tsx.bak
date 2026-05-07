@@ -7,9 +7,6 @@ import React, { createElement } from "react";
 import { LegendEntriesType, MarkerImagesType } from "../../typings/GoogleMapsCustomMarkerProps";
 import { pinSymbolPath } from "./MarkerUtils";
 
-// Base64 encoded icon for legend toggle button
-export const LEGEND_TOGGLE_ICON = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHwAAAB6CAYAAAB9RzejAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAQaSURBVHhe7dzNSuNQHIbxNlVQxJWL8QK8MxfOwo0ggohtRZeKGxfjLXhfLt2NKPQjk389DtacfLU2Oc37/CDYDOLUPj3pOTVNN47jDnRE7itEEFwMwcV4X8Ovrq667mYjBoMBE4sVSQV3cacfe42JiL4aqUO6PdCj0cjtoW28r+Hv7+/uFtqGSZsYgoshuBjvsuz09DTe3d91e43InKU3vWQMXdHqpqkR3ku2aGNj42OvpMc/j/bL2JKRLWMrGhBNBO8lz8KpPRMvLi66VaKPxiwXl1V38Flsd3tmPB5Hk8nE7WHV6gyeiu10ez07wqMOdQX3xk5eb+z/Z3jXqGrwXtWJVoLYAakSfBau4kSL2IEpG3wuXMnoxA5Q2eCpxXxBdGIHqlTwOI5T8YxFT7i9/4gdsFLBLepwOPS+Zdfv979GJ3bgSgU3RdGTL/b+N7EDVzq4yYuexE79O7HDUym4yYv+FbHDVDm4KYpO7HAtFNxkRSd22BYObr5HJ3b4fuSMF/sZSXz7k9dPxc484+Xu7i6OoqWep61lZxufn5/nngCxdqc4YTkMFTEEF0NwMQQXQ3Ax3uAHBwcdW/o0tTFDXx3vsgztxSFdDMHFEFwMwcUQXAzBxRBcDMHFeN94GQyG8evrX7dXv9vb29w/4mNxnAAhhkO6GIKLIbgYgoshuJhGZunb29udt7e3aDweTzMuKpA5S7+8vIy56pNf8nh2bm5ucpe0tY/wnZ2dztnZWdeCXl9fd+1OlvXw8BDbE8Q+8cKW3jY3N+3TP+EEt5GdHD3m7lASkJeVGtX2YH+ObLc7h9Os6lNLcN/I/jSZTKZ2OEI9KgWfTr3X9smVN7L7/T4TsJqVDr63t2enENv3ly6UN7KJ3YxSwS328fHxbGadbDbMC0tZbEZ2eEoFf3l5mfu+ougcxsNV9pCeipcVncN42MoGn7jLecz5Hp2RHb6ywU1e9Gj/1z4jew1UCW6yosdHv4+IvQaqBjfe6D7EDs8iwU1hdGKHadHgJjM6ccO1THCTik7ssC0b3MyiJ1t31bFtjY/l/ERwY1dgnK56ZB8eHtpKwO4zW8ZmK6bkayY+iCDGnhUQQnAxBBfjDb61teVuoW1SwW15Zae7op28s3SL7m42ghn66niDo72YtIkhuBiCiyG4GIKLIbgYgoshuBjvGy9PT0/x8/Oz26vfyclJo+/0tRknQIjhkC6G4GIILobgYgguZu1m6U2fnBG6otXNWo3w+/t7+2Xs8+hsGVvRgFir4Jxrtzxew8UQXAzBxRBcDMHFEFwMwcUQXAzBxRBcDMHFEFwMwcUQXMxaBR+NRu4WFrVWwd0HFOw+s2VsRWe88EEEMfasgBCCiyG4GG9wrsTYXqngXImx3byzdK7E2F7e4GirTucf/Gk/K3MRV5IAAAAASUVORK5CYII=";
-
 interface LegendProps {
     title?: string;
     legendByIcons: boolean;
@@ -79,12 +76,15 @@ export default class Legend extends React.Component<LegendProps, LegendState> {
         console.debug(this.logNode + "rendering legend with " + legendEntryType);
 
         const entrySize = 30;
+        const imgStyle = { height: "18px", width: "18px" };
         const divStyle = { height: entrySize + "px", width: entrySize + "px", display: "inline" };
+        const closeBtnStyle = { "pointer-events": "none", display: "block" };
 
         const listDimensions = { height: entrySize * legendEntriesSize + "px", width: "200px" };
 
         return (
             <div className={"googlemaps-custommarker-legend"}>
+                {this.state.paneOpened && (XNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAQaSURBVHhe7dzNSuNQHIbxNlVQxJWL8QK8MxfOwo0ggohtRZeKGxfjLXhfLt2NKPQjk389DtacfLU2Oc37/CDYDOLUPj3pOTVNN47jDnRE7itEEFwMwcV4X8Ovrq667mYjBoMBE4sVSQV3sacfe42JiL4aqUO6PdCj0cjtoW28r+Hv7+/uFtqGSZsYgoshuBjvsuz09DTe3d11e43InKU3vWQMXdHqpqkR3ku2aGNj42OvpMc/j/bL2JKRLWMrGhBNBO8lz8KpPRMvLi66VaKPxiwXl1V38Flsd3tmPB5Hk8nE7WHV6gyeiu10ez07wqMOdQX3xk5eb+z/Z3jXqGrwXtWJVoLYAakSfBau4kSL2IEpG3wuXMnoxA5Q2eCpxXxBdGIHqlTwOI5T8YxFT7i9/4gdsFLBLepwOPS+Zdfv979GJ3bgSgU3RdGTL/b+N7EDVzq4yYuexE79O7HDUym4yYv+FbHDVDm4KYpO7HAtFNxkRSd22BYObr5HJ3b4fuSMF/sZSXz7k9dPxc484+Xu7i6OoqWep61lZxufn5/nngCxdqc4YTkMFTEEF0NwMQQXQ3Ax3uAHBwcdW/o0tTFDXx3vsgztxSFdDMHFEFwMwcUQXAzBxRBcDMHFeN94GQyG8evrX7dXv9vb29w/4mNxnAAhhkO6GIKLIbgYgoshuJhGZunb29udt7e3aDweTzMuKpA5S7+8vIy56pNf8nh2bm5ucpe0tY/wnZ2dztnZWdeCXl9fd+1OlvXw8BDbE8Q+8cKW3jY3N+3TP+EEt5GdHD3m7lASkJeVGtX2YH+ObLc7h9Os6lNLcN/I/jSZTKZ2OEI9KgWfTr3X9smVN7L7/T4TsJqVDr63t2enENv3ly6UN7KJ3YxSwS328fHxbGadbDbMC0tZbEZ2eEoFf3l5mfu+ougcxsNV9pCeipcVncN42MoGn7jLecz5Hp2RHb6ywU1e9Gj/1z4jew1UCW6yosdHv4+IvQaqBjfe6D7EDs8iwU1hdGKHadHgJjM6scO1THCTik7ssC0b3MyiJ1t31bFtjY/l/ERwY1dgnK56ZB8eHtpKwO4zW8ZmK6bkayY+iCDGnhUQQnAxBBfjDb61teVuoW1SwW15Zae7op28s3SL7m42ghn66niDo72YtIkhuBiCiyG4GIKLIbgYgoshuBjvGy9PT0/x8/Oz26vfyclJo+/0tRknQIjhkC6G4GIILobgYgguZu1m6U2fnBG6otXNWo3w+/t7+2Xs8+hsGVvRgFir4Jxrtzxew8UQXAzBxRBcDMHFEFwMwcUQXAzBxRBcDMHFEFwMwcUQXMxaBR+NRu4WFrVWwd0HFOw+s2VsRWe88EEEMfasgBCCiyG4GG9wrsTYXqngXImx3byzdK7E2F7e4GirTucf/Gk/K3MRV5IAAAAASUVORK5CYII="
                 {this.state.paneOpened && (
                     <div className={"gm-layer-modal"} title={this.props.title} aria-label={this.props.title}>
                         <div className={"gm-layer-modal-text"}>
@@ -98,41 +98,3 @@ export default class Legend extends React.Component<LegendProps, LegendState> {
                                                     d={pinSymbolPath(legendEntry.legendEntryIcon)}
                                                     stroke={"black"}
                                                     strokeWidth={1}
-                                                    opacity={1}
-                                                    fill={legendEntry.legendEntryColor}
-                                                    transform={this.determineTranslation(legendEntry.legendEntryIcon)}
-                                                />
-                                            </svg>
-                                            {legendEntry.legendEntryName}
-                                        </li>
-                                    ))}
-                                {this.props.legendByIcons &&
-                                    this.props.legendIcons.map((legendIcon, index) => (
-                                        <li key={"legendIcon_" + index} style={{ padding: "6px 0px" }}>
-                                            <div style={divStyle}>
-                                                <img src={legendIcon.enumImage.value?.uri} className="gm-legend-entry-icon"></img>
-                                                <text>{legendIcon.enumKey}</text>
-                                            </div>
-                                        </li>
-                                    ))}
-                            </ul>
-                        </div>
-                        <button
-                            draggable="false"
-                            data-dojo-attach-point="layerToggleModalClose"
-                            title="Sluiten"
-                            aria-label="Sluiten"
-                            onClick={this.closeLegendPane}
-                            type="button"
-                            className="gm-ui-hover-effect gm-layer-modal-close"
-                        >
-                            <img
-                                src={"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2215px%22%20height%3D%2215px%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22%23000000%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M19%206.41L17.59%205%2012%2010.59%206.41%205%205%206.41%2010.59%2012%205%2017.59%206.41%2019%2012%2013.41%2017.59%2019%2019%2017.59%2013.41%2012z%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%0A%3C%2Fsvg%3E%0A"}
-                            ></img>
-                        </button>
-                    </div>
-                )}
-            </div>
-        );
-    }
-}

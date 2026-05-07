@@ -35,6 +35,9 @@ export const useTerraDraw = (onMarkerComplete?: (position: Position | Position[]
 
       drawInstance.start();
 
+      // Set initial mode based on editability — caller can override later
+      drawInstance.setMode('static');
+
       // Listen for the 'finish' event - fired when a feature is completed, both created and dragged
       drawInstance.on("finish", (id: string, context: { action: string; mode: string }) => {
 

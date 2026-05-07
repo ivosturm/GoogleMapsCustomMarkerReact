@@ -1,20 +1,38 @@
-import { ControlPosition, Map as GoogleMap, InfoWindow, useApiIsLoaded, useMap  } from '@vis.gl/react-google-maps';
-import React, { Fragment, createElement, useCallback, useEffect, useState, useRef } from "react";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// @ts-ignore TS6133
+import { Map as GoogleMapComponent, InfoWindow, useApiIsLoaded, useMap  } from '@vis.gl/react-google-maps';
+// @ts-ignore TS6133
+import { Fragment, createElement, useCallback, useEffect, useState, useRef } from "react";
 import { ObjectItem, ListWidgetValue, EditableValue, ListActionValue } from "mendix";
 
+// @ts-ignore TS6133
 import InfoWindowComponent from "./InfoWindow";
+// @ts-ignore TS6133
 import { InfoWindowContent } from "./InfoWindowContent";
 import { PositionProps } from   "./MarkerUtils";                                                        
 import { DefaultMapTypeEnum, LegendEntriesType, MarkerImagesType } from "../../typings/GoogleMapsCustomMarkerProps";
+// @ts-ignore TS6133
 import MarkerComponent, { MarkerProps } from "./Marker";
+// @ts-ignore TS6133
 import Legend from "./Legend";
+// @ts-ignore TS6133
 import { Polyline } from './Polyline';
+// @ts-ignore TS6133
 import { ClusteredMarkers } from './ClusteredMarkers';
 import { Feature, FeatureCollection, Point } from 'geojson';
 
 import { isEqual } from "lodash"; // You can use lodash for deep comparison
+// @ts-ignore TS6133
 import MapHandler from './MapHandler';
-import { CustomMapControl } from './MapControl';
+// @ts-ignore TS6133
+import { ActionButtonsMapControl, CustomMapControl } from './MapControl';
+import { updateAttribute } from "./MarkerUtils";
+
+interface MarkerUndoEntry {
+    guid: string;
+    previousPosition: PositionProps;
+    nextPosition: PositionProps;
+}
 
 export interface InfoWindowStateProps {
     name: string;
@@ -22,6 +40,42 @@ export interface InfoWindowStateProps {
     pixelOffset?: [number, number];
     mxObject?: ObjectItem;
 }
+
+const INFO_WINDOW_Z_INDEX = 2000000;
+
+const getMarkerInfoWindowPixelOffset = (symbol?: MarkerProps["symbol"], size?: MarkerProps["size"]): [number, number] | undefined => {
+    const dims: Record<NonNullable<MarkerProps["size"]>, number> = {
+        XXS: 10,
+        XS: 20,
+        S: 30,
+        M: 40,
+        L: 50,
+        XL: 60
+    };
+    const dim = dims[size ?? "M"];
+    if (symbol === "MARKER") {
+        return [0, -dim * 2];
+    }
+    if (symbol === "STAR") {
+        return [0, -Math.round(dim * 14 / 30)];
+    }
+    return [0, -Math.round(dim / 2)];
+};
+
+const getOpenInfoWindowPixelOffset = (
+    infowindowObj: InfoWindowStateProps,
+    locations?: MarkerProps[]
+): [number, number] | undefined => {
+    const openGuid = infowindowObj.mxObject?.id;
+    if (!openGuid) {
+        return infowindowObj.pixelOffset;
+    }
+    const currentMarker = locations?.find(location => location.guid === openGuid);
+    if (!currentMarker) {
+        return infowindowObj.pixelOffset;
+    }
+    return getMarkerInfoWindowPixelOffset(currentMarker.symbol, currentMarker.size);
+};
 
 interface GoogleMapsPropsExtended {
     mapContainerStyle?: {
@@ -37,12 +91,21 @@ interface GoogleMapsPropsExtended {
     formattedAddressAttrUpdate?: EditableValue<string>;
     locations?: MarkerProps[];
     enableMarkerClusterer: boolean;
+    enableClusterSpiderfier: boolean;
     MCGridSize: number;
     MCMaxZoom: number;
     MCInfoWindowText: string;
+    MCMediumThreshold: number;
+    MCLargeThreshold: number;
+    MCColorSmall: string;
+    MCColorMedium: string;
+    MCColorLarge: string;
     int_disableInfoWindow: boolean;
     int_onClick?: ListActionValue; 
     infoWindowWidget?: ListWidgetValue;
+    opt_selectedmarkerstyle: boolean;
+    selectedMarkerScalePercent: number;
+    selectedMarkerZIndexBoost: number;
     zoomToCurrentLocation: boolean;
     overruleFitBoundsZoom: boolean;
     defaultMapType: DefaultMapTypeEnum;
@@ -52,6 +115,8 @@ interface GoogleMapsPropsExtended {
     opt_streetview: boolean;
     opt_zoomcontrol: boolean;
     opt_fullscreencontrol: boolean;
+    opt_recenterbutton: boolean;
+    opt_undobutton: boolean;
     opt_tilt: string;
     legendEnabled: boolean;
     legendHeaderText?: string;
@@ -82,7 +147,7 @@ interface MapState {
 
 const Map: React.FC<GoogleMapsPropsExtended> = (props) => {
     const logNode: string = "Google Maps Custom Marker (React) widget: Map component ";
-    const childLegend = React.useRef<Legend>(null);
+    const childLegend = useRef<Legend>(null);
     let currentLocation: PositionProps;
 
     const prevLocationsRef = useRef<MarkerProps[]>([]);
@@ -100,6 +165,132 @@ const Map: React.FC<GoogleMapsPropsExtended> = (props) => {
     const map = useMap();
 
     const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
+    const [selectedMarkerGuid, setSelectedMarkerGuid] = useState<string | null>(null);
+    const lastMarkerClickTsRef = useRef<number>(0);
+    const [hasBeenDragged, setHasBeenDragged] = useState(false);
+    const hasBeenDraggedRef = useRef(false);
+    const initialCenterRef = useRef<{ lat: number; lng: number } | null>(null);
+    const initialZoomRef = useRef<number | null>(null);
+    const [undoStepCount, setUndoStepCount] = useState(0);
+    const [redoStepCount, setRedoStepCount] = useState(0);
+    const undoStackRef = useRef<MarkerUndoEntry[]>([]);
+    const redoStackRef = useRef<MarkerUndoEntry[]>([]);
+    const [positionOverrides, setPositionOverrides] = useState<Record<string, PositionProps>>({});
+    const mapInitializedRef = useRef(false);
+
+    useEffect(() => {
+        if (!map || mapInitializedRef.current) {
+            return;
+        }
+        mapInitializedRef.current = true;
+        hasBeenDraggedRef.current = false;
+        setHasBeenDragged(false);
+        initialCenterRef.current = null;
+        initialZoomRef.current = null;
+        undoStackRef.current = [];
+        redoStackRef.current = [];
+        setUndoStepCount(0);
+        setRedoStepCount(0);
+        setPositionOverrides({});
+    }, [map]);
+
+    const applyMarkerPosition = useCallback((guid: string, position: PositionProps) => {
+        setPositionOverrides(prev => ({ ...prev, [guid]: position }));
+        if (props.latAttrUpdate && props.lngAttrUpdate) {
+            updateAttribute(position.lat, "lat", props.latAttrUpdate);
+            updateAttribute(position.lng, "lng", props.lngAttrUpdate);
+        }
+    }, [props.latAttrUpdate, props.lngAttrUpdate]);
+
+    const handleMarkerPositionChanged = useCallback((guid: string, previousPosition: PositionProps, nextPosition: PositionProps) => {
+        const unchanged = previousPosition.lat === nextPosition.lat && previousPosition.lng === nextPosition.lng;
+        if (unchanged) {
+            return;
+        }
+
+        undoStackRef.current.push({ guid, previousPosition, nextPosition });
+        if (undoStackRef.current.length > 50) {
+            undoStackRef.current.shift();
+        }
+        setUndoStepCount(undoStackRef.current.length);
+
+        redoStackRef.current = [];
+        setRedoStepCount(0);
+
+        setPositionOverrides(prev => ({ ...prev, [guid]: nextPosition }));
+    }, []);
+
+    const handleUndoLastMarkerEdit = useCallback(() => {
+        const entry = undoStackRef.current.pop();
+        setUndoStepCount(undoStackRef.current.length);
+        if (!entry) {
+            return;
+        }
+
+        redoStackRef.current.push(entry);
+        if (redoStackRef.current.length > 50) {
+            redoStackRef.current.shift();
+        }
+        setRedoStepCount(redoStackRef.current.length);
+
+        applyMarkerPosition(entry.guid, entry.previousPosition);
+    }, [applyMarkerPosition]);
+
+    const handleRedoLastMarkerEdit = useCallback(() => {
+        const entry = redoStackRef.current.pop();
+        setRedoStepCount(redoStackRef.current.length);
+        if (!entry) {
+            return;
+        }
+
+        undoStackRef.current.push(entry);
+        if (undoStackRef.current.length > 50) {
+            undoStackRef.current.shift();
+        }
+        setUndoStepCount(undoStackRef.current.length);
+
+        applyMarkerPosition(entry.guid, entry.nextPosition);
+    }, [applyMarkerPosition]);
+
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            const isModKey = event.ctrlKey || event.metaKey;
+            const key = event.key.toLowerCase();
+
+            if (!isModKey || !props.opt_undobutton || !props.latAttrUpdate || !props.lngAttrUpdate) {
+                return;
+            }
+
+            if ((key === "y" || (key === "z" && event.shiftKey)) && redoStackRef.current.length > 0) {
+                event.preventDefault();
+                handleRedoLastMarkerEdit();
+                return;
+            }
+
+            if (key === "z" && undoStackRef.current.length > 0) {
+                event.preventDefault();
+                handleUndoLastMarkerEdit();
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [props.opt_undobutton, props.latAttrUpdate, props.lngAttrUpdate, handleUndoLastMarkerEdit, handleRedoLastMarkerEdit]);
+
+    useEffect(() => {
+        if (!map || !isLoaded) {
+            return;
+        }
+
+        const dragEndListener = map.addListener("dragend", () => {
+            hasBeenDraggedRef.current = true;
+            setHasBeenDragged(true);
+        });
+
+        return () => {
+            google.maps.event.removeListener(dragEndListener);
+        };
+    }, [map, isLoaded]);
 
     const handleSearchBoxMounted = useCallback((searchBox: google.maps.places.SearchBox) => {  
         console.debug(logNode + "searchbox mounted!");   
@@ -147,13 +338,11 @@ const Map: React.FC<GoogleMapsPropsExtended> = (props) => {
         infowindowObj: {} as InfoWindowStateProps
     });
 
-    const [, setNumClusters] = useState(0);
-
     const [infowindowData, setInfowindowData] = useState<{
         anchor: google.maps.Marker;
         features: Feature<Point>[];
       } | null>(null);
-    
+
     const handleInfoWindowClose = useCallback(
     () => setInfowindowData(null),
     [setInfowindowData]
@@ -170,10 +359,8 @@ const Map: React.FC<GoogleMapsPropsExtended> = (props) => {
                     console.debug(logNode + "closing infowindow...");
                     onInfoWindowClose();
                 }
-                handleOnGoogleApiLoaded(map)
+                handleOnGoogleApiLoaded(map);
                 // if only object is new, shouldn't have coordinates
-
-;
             } else {
                 console.debug(logNode + "locations did not change, no update needed.");
             }
@@ -183,28 +370,21 @@ const Map: React.FC<GoogleMapsPropsExtended> = (props) => {
 
 
     function clickHandler(event: any, location: MarkerProps) {
+        lastMarkerClickTsRef.current = Date.now();
+
+        // Prevent map click handler from firing when a marker is clicked.
+        // Otherwise selection is immediately cleared again.
+        if (event?.domEvent?.stopPropagation) {
+            event.domEvent.stopPropagation();
+        }
+        if (event?.domEvent?.preventDefault) {
+            event.domEvent.preventDefault();
+        }
+
         const name = location.name
         const position = location.position; 
-        let pixelOffset: [number, number] = [0, -40];
-
-        // adjust vertical offset to above marker depending on size/scale
-        switch (location.size) {
-            case "L":
-                pixelOffset[1] = -40;
-                break;
-            case "M":
-                pixelOffset[1] = -35;
-                break;
-            case "S":
-                pixelOffset[1] = -30;
-                break;
-            case "XS":
-                pixelOffset[1] = -25;
-                break;
-            case "XXS":
-                pixelOffset[1] = -20
-                break;
-        }
+        const pixelOffset = getMarkerInfoWindowPixelOffset(location.symbol, location.size);
+        setSelectedMarkerGuid(location.guid);
             
         const mxObject = location.mxObject;
         // trigger infowindow functionality if enabled in interaction settings
@@ -232,8 +412,15 @@ const Map: React.FC<GoogleMapsPropsExtended> = (props) => {
     }
     // close legend pane when clicking (not dragging) on map if opened
     const onMapClick = () => {
+        // Some marker clicks still trigger a subsequent map click in certain browser/Maps event paths.
+        // Ignore very recent map clicks so marker selection is not immediately cleared.
+        if (Date.now() - lastMarkerClickTsRef.current < 250) {
+            return;
+        }
+
         childLegend.current?.closeLegendPane();
         setInfowindowData(null);
+        setSelectedMarkerGuid(null);
     };
     const onInfoWindowClose = () => {
         setState(prevState => ({
@@ -242,6 +429,47 @@ const Map: React.FC<GoogleMapsPropsExtended> = (props) => {
                     infowindowObj: {} as InfoWindowStateProps
                 }));
     };
+
+    const onRecenterMap = useCallback(() => {
+        if (!map || !initialCenterRef.current || initialZoomRef.current === null) {
+            return;
+        }
+        map.setCenter(initialCenterRef.current);
+        map.setZoom(initialZoomRef.current);
+        hasBeenDraggedRef.current = false;
+        setHasBeenDragged(false);
+    }, [map]);
+
+    const captureInitialMapState = useCallback((targetMap: google.maps.Map) => {
+        if (hasBeenDraggedRef.current) {
+            return;
+        }
+        const center = targetMap.getCenter();
+        const zoom = targetMap.getZoom();
+        if (center && zoom !== undefined && zoom !== null) {
+            initialCenterRef.current = { lat: center.lat(), lng: center.lng() };
+            initialZoomRef.current = zoom;
+            hasBeenDraggedRef.current = false;
+            setHasBeenDragged(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (!map || !isLoaded) {
+            return;
+        }
+
+        // Always capture baseline center/zoom after map settles, even when
+        // handleOnGoogleApiLoaded is not triggered by datasource changes.
+        const idleListener = google.maps.event.addListenerOnce(map, "idle", () => {
+            captureInitialMapState(map);
+        });
+
+        return () => {
+            google.maps.event.removeListener(idleListener);
+        };
+    }, [map, isLoaded, captureInitialMapState, props.locations, props.defaultLat, props.defaultLng, props.lowestZoom]);
+
     const handleOnGoogleApiLoaded = (map: google.maps.Map) => {
         console.debug(logNode + "handleOnGoogleApiLoaded called! with isLoaded: " + isLoaded);
         // store map in state, so this function can be called a second time once the API and map are already loaded
@@ -293,6 +521,10 @@ const Map: React.FC<GoogleMapsPropsExtended> = (props) => {
         } else {
             map.setCenter(position);
         }
+
+        // Capture immediately when possible and again on idle for fitBounds/asynchronous zoom updates.
+        captureInitialMapState(map);
+        google.maps.event.addListenerOnce(map, "idle", () => captureInitialMapState(map));
     }
 
     const zoomToCurrentLocation = (map: google.maps.Map) => {
@@ -323,12 +555,27 @@ const Map: React.FC<GoogleMapsPropsExtended> = (props) => {
         );
     }
 
+        const visibleLocations = props.locations
+            ? props.locations
+                .filter(location => !location.isNew && !(props.hideMarkers && props.showLines))
+                .map(location => {
+                    const overriddenPosition = positionOverrides[location.guid];
+                    return overriddenPosition
+                        ? { ...location, position: overriddenPosition }
+                        : location;
+                })
+            : [];
+
+        const orderedVisibleLocations = [...visibleLocations].sort((a, b) => {
+            const aSelected = a.guid === selectedMarkerGuid ? 1 : 0;
+            const bSelected = b.guid === selectedMarkerGuid ? 1 : 0;
+            return aSelected - bSelected;
+        });
+
         // Create the GeoJSON object
         const geojson: FeatureCollection<Point> = {
             type: 'FeatureCollection',
-            features: props.locations
-                ? props.locations
-                    .filter(location => !location.isNew && !(props.hideMarkers && props.showLines))
+            features: visibleLocations
                     .map(location => ({
                         type: 'Feature',
                         geometry: {
@@ -345,7 +592,6 @@ const Map: React.FC<GoogleMapsPropsExtended> = (props) => {
                             color: location.color,
                             size: location.size,
                             onClick: (event: google.maps.MapMouseEvent) => {
-                                console.debug(logNode + "triggering clickHandler from marker clustering!");
                                 clickHandler(
                                     event,
                                     location
@@ -356,13 +602,13 @@ const Map: React.FC<GoogleMapsPropsExtended> = (props) => {
                             visible: location.visible
                         }
                     }))
-                : []
         };
         return (
             <>
                 {isLoaded ? (
-                    <><GoogleMap
+                    <><GoogleMapComponent
                         mapId={'DEMO_MAP_ID'} // advanced markers need this feature. 
+                        style={props.mapContainerStyle}
                         defaultCenter={Object.keys(state.bounds).length === 0 ? state.center : { lat: state.bounds.getCenter().lat(), lng: state.bounds.getCenter().lng() }}
                         defaultZoom={state.zoom}
                         zoomControl={props.opt_zoomcontrol}
@@ -388,7 +634,8 @@ const Map: React.FC<GoogleMapsPropsExtended> = (props) => {
                         {infowindowData && (
                             <InfoWindow
                                 onCloseClick={handleInfoWindowClose}
-                                anchor={infowindowData.anchor}>
+                                anchor={infowindowData.anchor}
+                                zIndex={INFO_WINDOW_Z_INDEX}>
                                 <InfoWindowContent features={infowindowData.features}
                                     text={props.MCInfoWindowText} 
                                 />
@@ -408,23 +655,44 @@ const Map: React.FC<GoogleMapsPropsExtended> = (props) => {
                                 onCloseClick={onInfoWindowClose}
                                 name={state.infowindowObj.name}
                                 position={state.infowindowObj.position}
-                                pixelOffset={state.infowindowObj.pixelOffset}
+                                pixelOffset={getOpenInfoWindowPixelOffset(state.infowindowObj, props.locations)}
                                 infoWindowWidget={props.infoWindowWidget}
                                 mxObject={state.infowindowObj.mxObject || ({} as ObjectItem)}
+                                zIndex={INFO_WINDOW_Z_INDEX}
                             ></InfoWindowComponent>
                         )}
                         {props.enableMarkerClusterer ? (
-                            <ClusteredMarkers geojson={geojson} setNumClusters={setNumClusters} setInfowindowData={setInfowindowData} />
+                            <ClusteredMarkers 
+                                geojson={geojson} 
+                                radius={props.MCGridSize}
+                                maxZoom={props.MCMaxZoom}
+                                mediumThreshold={props.MCMediumThreshold}
+                                largeThreshold={props.MCLargeThreshold}
+                                colorSmall={props.MCColorSmall}
+                                colorMedium={props.MCColorMedium}
+                                colorLarge={props.MCColorLarge}
+                                enableSpiderfier={props.enableClusterSpiderfier}
+                                selectedMarkerGuid={selectedMarkerGuid}
+                                enableSelectedStyle={props.opt_selectedmarkerstyle}
+                                selectedScalePercent={props.selectedMarkerScalePercent}
+                                selectedZIndexBoost={props.selectedMarkerZIndexBoost}
+                            />
                         ) : (
-                            props.locations?.map(location => !location.isNew && !(props.hideMarkers && props.showLines) ? (
+                            orderedVisibleLocations.map(location => (
                                 <MarkerComponent
                                     isNew={false}
-                                    key={"marker_" + location.guid}
+                                    key={[
+                                        "marker",
+                                        location.guid,
+                                        location.symbol ?? "MARKER",
+                                        location.size ?? "M",
+                                        location.color ?? "",
+                                        location.iconImage?.value?.uri ?? ""
+                                    ].join("_")}
                                     name={location.name}
                                     position={location.position}
                                     iconImage={location.iconImage}
                                     onClick={(e: google.maps.MapMouseEvent) => {
-                                        console.debug(logNode + "triggering clickHandler!");
                                         clickHandler(e, location);
                                     } }
                                     guid={location.guid}
@@ -438,9 +706,14 @@ const Map: React.FC<GoogleMapsPropsExtended> = (props) => {
                                     symbol={location.symbol}
                                     color={location.color}
                                     size={location.size}
-                                    opacity={location.opacity} />
-                            ) : null
-                            )
+                                    isSelected={selectedMarkerGuid === location.guid}
+                                    enableSelectedStyle={props.opt_selectedmarkerstyle}
+                                    selectedScalePercent={props.selectedMarkerScalePercent}
+                                    opacity={location.opacity}
+                                    selectedZIndexBoost={props.selectedMarkerZIndexBoost}
+                                    onPositionChanged={handleMarkerPositionChanged}
+                                />
+                            ))
                         )}
 
                         {props.showLines ? (
@@ -455,7 +728,7 @@ const Map: React.FC<GoogleMapsPropsExtended> = (props) => {
                         {props.searchBoxEnabled && (
                             <>
                                 <CustomMapControl
-                                    controlPosition={ControlPosition.TOP}
+                                    controlPosition={google.maps.ControlPosition.TOP_CENTER}
                                     onPlaceSelect={setSelectedPlace}
                                     onSearchBoxMounted={handleSearchBoxMounted}
                                     center={state.center}
@@ -464,7 +737,20 @@ const Map: React.FC<GoogleMapsPropsExtended> = (props) => {
                                 <MapHandler place={selectedPlace} />
                             </>
                         )}
-                    </GoogleMap>
+                        <ActionButtonsMapControl
+                            controlPosition={google.maps.ControlPosition.RIGHT_TOP}
+                            showRecenter={hasBeenDragged && initialCenterRef.current !== null && initialZoomRef.current !== null && props.opt_recenterbutton}
+                            showUndo={undoStepCount > 0 && props.opt_undobutton && !!props.latAttrUpdate && !!props.lngAttrUpdate}
+                            showRedo={redoStepCount > 0 && props.opt_undobutton && !!props.latAttrUpdate && !!props.lngAttrUpdate}
+                            showLegend={props.legendEnabled}
+                            undoStepCount={undoStepCount}
+                            redoStepCount={redoStepCount}
+                            onRecenter={onRecenterMap}
+                            onUndo={handleUndoLastMarkerEdit}
+                            onRedo={handleRedoLastMarkerEdit}
+                            onToggleLegend={() => childLegend.current?.toggleLegendPaneVisibility()}
+                        />
+                    </GoogleMapComponent>
                     </>
                     ) : (
                         <div className="spinner" />
@@ -473,5 +759,4 @@ const Map: React.FC<GoogleMapsPropsExtended> = (props) => {
         </>
     );
 };
-// Wrap the component with React.memo and pass the custom comparison function
-export default React.memo(Map);
+export default Map;

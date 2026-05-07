@@ -153,28 +153,22 @@ export function pinSymbol(color: string, symbol: LegendEntryIconEnum, size: size
 }
 
 export function pinSymbolPath(symbol: LegendEntryIconEnum): string {
-    // define pathsymbol to be by default a marker
-    let pathSymbol =
-        "M 0,0 C -2,-10 -10,-12 -10,-15 A 10,10 0 1,1 10,-15 C 10,-12 2,-10 0,0 z M -2,-15 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0";
+    const marker = "M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z";
     switch (symbol) {
-        case "CIRCLE":
-            pathSymbol = "M 0, 0 m -15, 0 a 15,15 0 1,0 30,0 a 15,15 0 1,0 -30,0";
-            break;
-        case "STAR":
-            pathSymbol = "M 0,-8 6,2 12,2 6,10 10,20 0,15 -10,20 -6,10 -12,2 -6,2 z";
-            break;
-        case "CROSS":
-            pathSymbol = "M -5 -15 h10 v10 h10 v10 h-10 v10 h-10 v-10 h-10 v-10 h10 z";
-            break;
-        case "TRIANGLE":
-            pathSymbol = "M -15 15 L 15 15 L 0 -15 z";
-            break;
         case "DIAMOND":
-            pathSymbol = "M 0 -15 15 0 0 15 -15 0 Z";
-            break;
+            return "M 0 -15 15 0 0 15 -15 0 Z";
+        case "CIRCLE":
+            return "M 0, 0 m -15, 0 a 15,15 0 1,0 30,0 a 15,15 0 1,0 -30,0";
+        case "CROSS":
+            return "M -5 -15 h10 v10 h10 v10 h-10 v10 h-10 v-10 h-10 v-10 h10 z";
+        case "TRIANGLE":
+            return "M -15 15 L 15 15 L 0 -15 z";
+        case "STAR":
+            return "M 0,-8 6,2 12,2 6,10 10,20 0,15 -10,20 -6,10 -12,2 -6,2 z";
+        case "MARKER":
+        default:
+            return marker;
     }
-
-    return pathSymbol;
 }
 
 export function createSymbol(location: MarkerProps): string {

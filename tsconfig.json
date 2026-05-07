@@ -1,15 +1,14 @@
 {
-  "extends": "./node_modules/@mendix/pluggable-widgets-tools/configs/tsconfig.base.json"  ,
+  "extends": "./node_modules/@mendix/pluggable-widgets-tools/configs/tsconfig.base.json",
   "compilerOptions": {
-  "baseUrl": ".",
-  "rootDir": "./",
-    "jsx": "react",
-    "jsxFactory": "React.createElement",
-    "jsxFragmentFactory": "React.Fragment",
-  "types": ["react", "jest"],
-  "target": "es5",
-  "lib": [ "es2016", "dom" ],
-  "esModuleInterop": true
+    "baseUrl": ".",
+    "rootDir": "./",
+    "jsxFactory": "createElement",
+    "jsxFragmentFactory": "Fragment",
+    "types": ["jest", "google.maps"],
+    "target": "es5",
+    "lib": ["es2016", "dom"],
+    "esModuleInterop": true
   },
   "exclude": [
     "dist/",
