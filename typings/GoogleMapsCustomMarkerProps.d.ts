@@ -122,6 +122,8 @@ export interface GoogleMapsCustomMarkerPreviewProps {
     style: string;
     styleObject?: CSSProperties;
     readOnly: boolean;
+    renderMode: "design" | "xray" | "structure";
+    translate: (text: string) => string;
     apiKeyObjectDS: {} | { caption: string } | { type: string } | null;
     apiKeyAttribute: string;
     mapHeight: number | null;
