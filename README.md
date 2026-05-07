@@ -1,7 +1,7 @@
 ## GoogleMapsCustomMarker
 An extension to the default Mendix Maps widget for showing point locations on a Google Map. It offers heaps of extra features like dropping/dragging, geocoding, marker clustering and determining current location. See all features in action here:
 
-https://googlemapsmarker100-sandbox.mxapps.io/index.html
+https://googlemapscustommarker-sandbox.mxapps.io/index.html?profile=Responsive
 
 This widget uses React / TypeScript and the pluggable widgets API. Additional features:
 
@@ -55,7 +55,7 @@ CUSTOMIZATION
 	should be self explanatory. A print screen for settings per feature is added in the Mendix Marketplace.
 
 ## Demo project
-https://googlemapsmarker100-sandbox.mxapps.io/index.html
+https://googlemapscustommarker-sandbox.mxapps.io/index.html?profile=Responsive
 
 ## Issues, suggestions and feature requests
 This version uses the vis.gl/react-google-maps library for creating React elements. Currently there is a shortcoming in the Mendix Pluggable widgets API, not being able to directly change an attribute loaded by data source, hence the latitude and longitude attributes have to be selected twice in the widget settings, if updates on latitude/longitude need to be automated by the widget via dragging.
